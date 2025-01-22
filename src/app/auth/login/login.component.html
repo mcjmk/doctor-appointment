@@ -19,21 +19,24 @@
       </mat-form-field>
 
       <mat-form-field appearance="fill">
-        <mat-label>Password</mat-label>
+        <mat-label>Hasło</mat-label>
         <input
           matInput
           formControlName="password"
           type="password"
-          placeholder="Enter your password"
+          placeholder="Hasło"
         />
 
         <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
-          Password is required
+          Hasło jest wymagane
         </mat-error>
         <mat-error *ngIf="loginForm.get('password')?.hasError('minlength')">
-          Password must be at least 6 characters
+          Hasło musi mieć co najmniej 6 znaków długości
         </mat-error>
       </mat-form-field>
+      <div *ngIf="errorMessage" class="error">
+        {{ errorMessage }}
+      </div>
       <button
         mat-raised-button
         color="primary"

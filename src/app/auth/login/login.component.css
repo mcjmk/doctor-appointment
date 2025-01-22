@@ -5,3 +5,8 @@ mat-form-field {
 mat-spinner {
   margin: auto;
 }
+
+.error {
+  color: red;
+  font-style: 14px;
+}
