@@ -1,20 +1,12 @@
 <mat-toolbar color="primary">
   <span><a routerLink="/">Lekarze</a></span>
-  <ul>
-    <li>
-      <a mat-button routerLink="/create" routerLinkActivate="mat-accent"
-        >New post</a
-      >
-    </li>
-    <li>
-      <a mat-button routerLink="/login" routerLinkActivate="mat-accent"
-        >Login</a
-      >
-    </li>
-    <li>
-      <a mat-button routerLink="/register" routerLinkActivate="mat-accent"
-        >Register</a
-      >
-    </li>
-  </ul>
+  <span class="spacer"></span>
+  <ng-container *ngIf="!(this.user$ | async)">
+    <button mat-button routerLink="/login">Login</button>
+    <button mat-button routerLink="/register">Register</button>
+  </ng-container>
+  <ng-container *ngIf="this.user$ | async">
+    <span>Hello {{ (user$ | async)?.email }}</span>
+    <button mat-button (click)="logout()">Logout</button>
+  </ng-container>
 </mat-toolbar>
