@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs';
 import { AuthService } from '../shared/auth.service';
+import { AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
 import firebase from 'firebase/compat/app';
 

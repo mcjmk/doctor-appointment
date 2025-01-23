@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { CalendarViewComponent } from './calendar-view/calendar-view.component';
 import { AvailabilityComponent } from './availability/availability.component';
 import { AbsencesComponent } from './absences/absences.component';
+import { CalendarComponent } from './calendar/calendar.component';
 
 
 
@@ -10,7 +11,8 @@ import { AbsencesComponent } from './absences/absences.component';
   declarations: [
     CalendarViewComponent,
     AvailabilityComponent,
-    AbsencesComponent
+    AbsencesComponent,
+    CalendarComponent
   ],
   imports: [
     CommonModule
