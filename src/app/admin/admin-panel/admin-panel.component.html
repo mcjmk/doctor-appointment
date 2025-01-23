@@ -44,3 +44,20 @@
     </table>
   </mat-card-content>
 </mat-card>
+
+<mat-card>
+  <mat-card-title>System Settings</mat-card-title>
+  <mat-card-content>
+    <mat-form-field>
+      <mat-label>Session Persistence</mat-label>
+      <mat-select
+        [(ngModel)]="selectedPersistence"
+        (selectionChange)="updatePersistence($event.value)"
+      >
+        <mat-option value="LOCAL">Local</mat-option>
+        <mat-option value="SESSION">Session</mat-option>
+        <mat-option value="NONE">None</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </mat-card-content>
+</mat-card>

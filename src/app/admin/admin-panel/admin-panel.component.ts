@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { User } from '../../shared/user';
 import { Observable } from 'rxjs';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AuthService } from '../../shared/auth.service';
 
 @Component({
   selector: 'app-admin-panel',
@@ -10,9 +11,11 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 })
 export class AdminPanelComponent {
   users$: Observable<User[]>;
-  displayedColumns: string[] = ['email', 'role', 'status', 'actions'];
 
-  constructor(private firestore: AngularFirestore) {
+  constructor(
+    private firestore: AngularFirestore,
+    private authService: AuthService
+  ) {
     this.users$ = this.firestore.collection<User>('users').valueChanges();
   }
 
@@ -22,5 +25,11 @@ export class AdminPanelComponent {
 
   toggleBan(userId: string, currentBanStatus: boolean): void {
     this.firestore.doc(`users/${userId}`).update({ banned: !currentBanStatus });
+  }
+
+  updatePersistence(type: 'LOCAL' | 'SESSION' | 'NONE'): void {
+    this.authService
+      .setPersistence(type)
+      .catch((error) => console.error('Error updating persistence:', error));
   }
 }
