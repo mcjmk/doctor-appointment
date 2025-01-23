@@ -4,6 +4,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { AppRoutingModule } from './app-routing.module';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FirestoreModule } from '@angular/fire/firestore';
 
 import { AngularFireModule } from '@angular/fire/compat';
 import { environment } from '../environments/environment';
@@ -21,8 +22,19 @@ import { HeaderComponent } from './header/header.component';
 import { HomeComponent } from './home/home.component';
 import { CartComponent } from './cart/cart.component';
 import { HistoryComponent } from './history/history.component';
+import { DoctorsComponent } from './doctors/doctors/doctors.component';
+import { CommonModule } from '@angular/common';
+import { AppointmentsComponent } from './appointments/appointments.component';
 @NgModule({
-  declarations: [AppComponent, HeaderComponent, HomeComponent, CartComponent, HistoryComponent],
+  declarations: [
+    AppComponent,
+    HeaderComponent,
+    HomeComponent,
+    CartComponent,
+    HistoryComponent,
+    DoctorsComponent,
+    AppointmentsComponent,
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -34,6 +46,8 @@ import { HistoryComponent } from './history/history.component';
     MatToolbarModule,
     FormsModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
+    FirestoreModule,
+    CommonModule,
     BrowserAnimationsModule,
     AuthModule,
   ],
