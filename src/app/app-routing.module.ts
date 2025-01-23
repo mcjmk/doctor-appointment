@@ -31,7 +31,7 @@ const routes: Routes = [
     data: { role: 'patient' },
   },
   {
-    path: 'admin',
+    path: 'adminPanel',
     component: AdminPanelComponent,
     canActivate: [AuthGuard],
     data: { role: 'admin' },

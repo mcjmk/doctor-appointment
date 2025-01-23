@@ -1,1 +1,46 @@
-<p>admin-panel works!</p>
+<mat-card>
+  <mat-card-title>User Management</mat-card-title>
+  <mat-card-content>
+    <table mat-table [dataSource]="users$" class="mat-elevation-z8">
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef>Email</th>
+        <td mat-cell *matCellDef="let user">{{ user.email }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="role">
+        <th mat-header-cell *matHeaderCellDef>Role</th>
+        <td mat-cell *matCellDef="let user">
+          <mat-form-field>
+            <mat-select
+              [value]="user.role"
+              (selectionChange)="updateRole(user.uid, $event.value)"
+            >
+              <mat-option value="patient">Patient</mat-option>
+              <mat-option value="doctor">Doctor</mat-option>
+              <mat-option value="admin">Admin</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let user">
+          {{ user.banned ? "Banned" : "Active" }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let user">
+          <button mat-button (click)="toggleBan(user.uid, user.banned)">
+            {{ user.banned ? "Unban" : "Ban" }}
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </mat-card-content>
+</mat-card>

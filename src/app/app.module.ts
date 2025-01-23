@@ -1,3 +1,4 @@
+import { MatOptionModule } from '@angular/material/core';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
@@ -23,8 +24,10 @@ import { HomeComponent } from './home/home.component';
 import { CartComponent } from './cart/cart.component';
 import { HistoryComponent } from './history/history.component';
 import { DoctorsComponent } from './doctors/doctors/doctors.component';
+import { MatTableModule } from '@angular/material/table';
+import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
-import { AppointmentsComponent } from './appointments/appointments.component';
+import { AdminModule } from './admin/admin.module';
 @NgModule({
   declarations: [
     AppComponent,
@@ -33,7 +36,6 @@ import { AppointmentsComponent } from './appointments/appointments.component';
     CartComponent,
     HistoryComponent,
     DoctorsComponent,
-    AppointmentsComponent,
   ],
   imports: [
     BrowserModule,
@@ -44,9 +46,14 @@ import { AppointmentsComponent } from './appointments/appointments.component';
     MatButtonModule,
     MatInputModule,
     MatToolbarModule,
+    MatOptionModule,
+    MatSelectModule,
+    MatTableModule,
+    MatSelectModule,
     FormsModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
     FirestoreModule,
+    AdminModule,
     CommonModule,
     BrowserAnimationsModule,
     AuthModule,
