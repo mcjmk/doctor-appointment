@@ -1,14 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CalendarService } from '../calendar/calendar.service';
 import { AuthService } from '../shared/auth.service';
 import { Appointment } from '../calendar/appointment.model';
+import firebase from 'firebase/compat/app';
 
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.css',
 })
-export class CartComponent {
+export class CartComponent implements OnInit {
   upcomingAppointments: Appointment[] = [];
 
   constructor(
@@ -23,6 +24,17 @@ export class CartComponent {
           .getPatientAppointments(user.uid)
           .subscribe((appointments) => {
             this.upcomingAppointments = appointments;
+            this.upcomingAppointments = appointments.map((app) => ({
+              ...app,
+              startTime:
+                app.startTime instanceof firebase.firestore.Timestamp
+                  ? app.startTime.toDate()
+                  : app.startTime,
+              endTime:
+                app.endTime instanceof firebase.firestore.Timestamp
+                  ? app.endTime.toDate()
+                  : app.endTime,
+            }));
           });
       }
     });

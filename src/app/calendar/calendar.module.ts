@@ -16,6 +16,7 @@ import { MatNativeDateModule, MatOptionModule } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { RouterModule } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { RouterModule } from '@angular/router';
     ReactiveFormsModule,
     MatCardModule,
     MatButtonModule,
+    MatIconModule,
     MatSelectModule,
     MatInputModule,
     MatFormFieldModule,

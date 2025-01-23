@@ -13,12 +13,20 @@
   text-align: center;
 }
 
-.available {
-  background-color: #e8f5e9;
+.slot-cell.available {
+  background-color: #e6f3e6;
+  cursor: pointer;
 }
 
-.booked {
-  background-color: #e3f2fd;
+.slot-cell.booked {
+  background-color: #f0f0f0;
+  color: #888;
+  cursor: not-allowed;
+}
+
+.slot-cell.absence {
+  background-color: #ffcccc;
+  cursor: not-allowed;
 }
 
 .past {
@@ -30,4 +38,14 @@ mat-form-field {
   width: 100%;
   max-width: 400px;
   margin-bottom: 20px;
+}
+
+.today {
+  background-color: #f0f0ff;
+  font-weight: bold;
+}
+
+.current-time {
+  background-color: #e6ffe6;
+  font-weight: bold;
 }
