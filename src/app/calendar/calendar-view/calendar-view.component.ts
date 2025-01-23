@@ -13,8 +13,11 @@ import {
   subWeeks,
   isSameDay,
   format,
+  isToday,
 } from 'date-fns';
 import { AppointmentDialogComponent } from '../appointment-dialog/appointment-dialog.component';
+import { Absence } from '../absence.model';
+import { Availability } from '../availability.model';
 
 @Component({
   selector: 'app-calendar-view',
@@ -26,9 +29,12 @@ export class CalendarViewComponent implements OnInit {
   doctors$: Observable<User[]>;
   selectedDoctorId: string = '';
   timeSlots: string[] = [];
-  appointments: Appointment[] = [];
   currentDate = new Date();
   displayHours = 6;
+
+  absences: Absence[] = [];
+  availabilities: Availability[] = [];
+  appointments: Appointment[] = [];
 
   constructor(
     public authService: AuthService,
@@ -45,6 +51,13 @@ export class CalendarViewComponent implements OnInit {
       this.authService.userData.subscribe((user) => {
         this.selectedDoctorId = user?.uid || '';
         this.loadData();
+      });
+    } else if (this.authService.isPatient()) {
+      this.doctors$.subscribe((doctors) => {
+        if (doctors.length > 0) {
+          this.selectedDoctorId = doctors[0].uid;
+          this.loadData();
+        }
       });
     }
   }
@@ -75,6 +88,18 @@ export class CalendarViewComponent implements OnInit {
         .subscribe((appointments) => {
           this.appointments = appointments;
         });
+
+      this.calendarService
+        .getDoctorAbsences(this.selectedDoctorId)
+        .subscribe((absences) => {
+          this.absences = absences;
+        });
+
+      this.calendarService
+        .getDoctorAvailability(this.selectedDoctorId)
+        .subscribe((availabilities) => {
+          this.availabilities = availabilities;
+        });
     }
   }
 
@@ -91,16 +116,62 @@ export class CalendarViewComponent implements OnInit {
   }
 
   isAvailable(day: Date, timeSlot: string): boolean {
-    return !this.isBooked(day, timeSlot) && !this.isPast(day, timeSlot);
+    if (this.isBooked(day, timeSlot) || this.isPast(day, timeSlot)) {
+      return false;
+    }
+
+    if (
+      this.absences.some((absence) => {
+        const startDate = new Date(absence.startDate);
+        const endDate = new Date(absence.endDate);
+        return day >= startDate && day <= endDate;
+      })
+    ) {
+      return false;
+    }
+
+    return this.availabilities.some((availability) => {
+      const startDate = new Date(availability.startDate);
+      const endDate = new Date(availability.endDate);
+      const dayOfWeek = day.getDay();
+
+      if (day < startDate || day > endDate) return false;
+
+      if (availability.cyclical && !availability.weekDays.includes(dayOfWeek))
+        return false;
+
+      return availability.slots.some((slot) => {
+        const [startHours, startMinutes] = slot.start.split(':').map(Number);
+        const [endHours, endMinutes] = slot.end.split(':').map(Number);
+
+        const [slotHours, slotMinutes] = timeSlot.split(':').map(Number);
+
+        const slotTime = slotHours * 60 + slotMinutes;
+        const startTime = startHours * 60 + startMinutes;
+        const endTime = endHours * 60 + endMinutes;
+
+        return slotTime >= startTime && slotTime < endTime;
+      });
+    });
   }
 
   isBooked(day: Date, timeSlot: string): boolean {
     return this.appointments.some((app) => {
       const appDate = new Date(app.startTime);
-      return isSameDay(appDate, day) && format(appDate, 'HH:mm') === timeSlot;
+      const appEndDate = new Date(app.endTime);
+      const [hours, minutes] = timeSlot.split(':').map(Number);
+
+      const slotStart = new Date(day);
+      slotStart.setHours(hours, minutes, 0, 0);
+
+      const slotEnd = new Date(slotStart);
+      slotEnd.setMinutes(slotEnd.getMinutes() + 30);
+
+      return (
+        isSameDay(appDate, day) && slotStart < appEndDate && slotEnd > appDate
+      );
     });
   }
-
   isPast(day: Date, timeSlot: string): boolean {
     const [hours, minutes] = timeSlot.split(':').map(Number);
     const slotDate = new Date(day);
@@ -130,23 +201,28 @@ export class CalendarViewComponent implements OnInit {
 
       dialogRef.afterClosed().subscribe((result) => {
         if (result) {
-          this.authService.userData.subscribe((user) => {
-            if (!user) return;
-
-            const appointment = {
-              ...result,
-              patientId: user.uid,
-            };
-
-            this.calendarService
-              .createAppointment(appointment)
-              .then(() => this.loadData())
-              .catch((error) =>
-                console.error('Error booking appointment:', error)
-              );
-          });
+          this.loadData();
         }
       });
     }
+  }
+
+  isTodayCell(day: Date): boolean {
+    return isToday(day);
+  }
+
+  isCurrentTimeSlot(slot: string): boolean {
+    const now = new Date();
+    const [hours, minutes] = slot.split(':').map(Number);
+
+    const slotDate = new Date();
+    slotDate.setHours(hours, minutes, 0, 0);
+
+    return (
+      isSameDay(now, slotDate) &&
+      now.getHours() === hours &&
+      now.getMinutes() >= minutes &&
+      now.getMinutes() < minutes + 30
+    );
   }
 }

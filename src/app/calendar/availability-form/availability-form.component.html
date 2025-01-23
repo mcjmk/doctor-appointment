@@ -1,1 +1,83 @@
-<p>availability-form works!</p>
+<mat-card>
+  <mat-card-title>Add Doctor Availability</mat-card-title>
+  <mat-card-content>
+    <form [formGroup]="availabilityForm" (ngSubmit)="onSubmit()">
+      <mat-form-field>
+        <mat-label>Start Date</mat-label>
+        <input
+          matInput
+          [matDatepicker]="startPicker"
+          formControlName="startDate"
+          required
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="startPicker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>End Date</mat-label>
+        <input
+          matInput
+          [matDatepicker]="endPicker"
+          formControlName="endDate"
+          required
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="endPicker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-checkbox formControlName="cyclical">Cyklicznie</mat-checkbox>
+
+      <div *ngIf="availabilityForm.get('cyclical')?.value">
+        <mat-label>Wybierz dni</mat-label>
+        <mat-checkbox-group formArrayName="weekDays">
+          <mat-checkbox
+            *ngFor="let day of weekDays; let i = index"
+            [value]="day.id.toString()"
+            [formControlName]="i"
+          >
+            {{ day.name }}
+          </mat-checkbox>
+        </mat-checkbox-group>
+      </div>
+
+      <div formArrayName="slots">
+        <div
+          *ngFor="let slot of slotsControls; let i = index"
+          [formGroupName]="i"
+        >
+          <mat-form-field>
+            <mat-label>Start Time</mat-label>
+            <input matInput type="time" formControlName="start" required />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>End Time</mat-label>
+            <input matInput type="time" formControlName="end" required />
+          </mat-form-field>
+          <button mat-icon-button (click)="removeTimeSlot(i)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <button mat-button type="button" (click)="addTimeSlot()">
+        Add Time Slot
+      </button>
+
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        [disabled]="!availabilityForm.valid"
+      >
+        Save Availability
+      </button>
+    </form>
+  </mat-card-content>
+</mat-card>

@@ -3,7 +3,7 @@
   <button mat-button routerLink="/doctors">Lekarze</button>
 
   <ng-container *ngIf="authService.isPatient()">
-    <button mat-button routerLink="/calendar">Kalendarz</button>
+    <button mat-button routerLink="/calendar">Harmonogramy lekarzy</button>
     <button mat-button routerLink="/appointments">Moje wizyty</button>
     <button mat-button routerLink="/cart">Koszyk</button>
   </ng-container>

@@ -24,6 +24,7 @@
 
     <mat-card-actions>
       <button
+        *ngIf="appointment.status !== 'odwołana'"
         mat-raised-button
         color="warn"
         (click)="cancelAppointment(appointment)"

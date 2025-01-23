@@ -30,12 +30,17 @@
     </tr>
 
     <tr *ngFor="let slot of timeSlots">
-      <td class="time-cell">{{ slot }}</td>
+      <td class="time-cell" [class.current-time]="isCurrentTimeSlot(slot)">
+        {{ slot }}
+      </td>
       <td
         *ngFor="let day of weekDays"
         class="slot-cell"
+        [class.today]="isTodayCell(day)"
+        [class.current-time]="isCurrentTimeSlot(slot)"
         [class.available]="isAvailable(day, slot)"
         [class.booked]="isBooked(day, slot)"
+        [class.absence]="!isAvailable(day, slot)"
         (click)="onSlotClick(day, slot)"
       >
         <ng-container *ngIf="getAppointment(day, slot) as appt">{{

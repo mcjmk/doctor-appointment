@@ -13,13 +13,13 @@ import { Availability } from '../availability.model';
 export class AvailabilityFormComponent implements OnInit {
   availabilityForm!: FormGroup;
   weekDays = [
+    { id: 0, name: 'Niedziela' },
     { id: 1, name: 'Poniedziałek' },
     { id: 2, name: 'Wtorek' },
     { id: 3, name: 'Środa' },
     { id: 4, name: 'Czwartek' },
     { id: 5, name: 'Piątek' },
     { id: 6, name: 'Sobota' },
-    { id: 0, name: 'Niedziela' },
   ];
 
   constructor(
@@ -50,6 +50,10 @@ export class AvailabilityFormComponent implements OnInit {
           );
         }
       });
+  }
+
+  get slotsControls() {
+    return (this.availabilityForm.get('slots') as FormArray).controls;
   }
 
   createTimeSlot() {
