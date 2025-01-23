@@ -1,0 +1,51 @@
+<h2 mat-dialog-title>Rezerwacja wizyty</h2>
+<mat-dialog-content>
+  <form [formGroup]="appointmentForm">
+    <p>Data: {{ data.date | date }} {{ data.timeSlot }}</p>
+
+    <mat-form-field>
+      <mat-label>Typ wizyty</mat-label>
+      <mat-select formControlName="type">
+        <mat-option value="pierwsza">Pierwsza wizyta</mat-option>
+        <mat-option value="kontrolna">Wizyta kontrolna</mat-option>
+        <mat-option value="choroba przewlekła">Choroba przewlekła</mat-option>
+        <mat-option value="recepta">Recepta</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Imię i nazwisko</mat-label>
+      <input matInput formControlName="patientName" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Płeć</mat-label>
+      <mat-select formControlName="patientGender">
+        <mat-option value="K">Kobieta</mat-option>
+        <mat-option value="M">Mężczyzna</mat-option>
+        <mat-option value="inna">Inna</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Wiek</mat-label>
+      <input matInput type="number" formControlName="patientAge" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Uwagi</mat-label>
+      <textarea matInput formControlName="notes"></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Anuluj</button>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onSubmit()"
+    [disabled]="!appointmentForm.valid"
+  >
+    Zarezerwuj
+  </button>
+</mat-dialog-actions>

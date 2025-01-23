@@ -1,1 +1,47 @@
-<p>calendar-view works!</p>
+<div class="calendar-container">
+  <mat-form-field *ngIf="authService.isPatient()">
+    <mat-label>Select Doctor</mat-label>
+    <mat-select [(ngModel)]="selectedDoctorId" (selectionChange)="loadData()">
+      <mat-option *ngFor="let doctor of doctors$ | async" [value]="doctor.uid">
+        {{ doctor.email }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div *ngIf="authService.isDoctor()" class="doctor-actions">
+    <button mat-raised-button routerLink="/calendar/availability">
+      Dodaj dostępność
+    </button>
+    <button mat-raised-button routerLink="/calendar/absence">
+      Dodaj nieobecność
+    </button>
+  </div>
+
+  <div class="week-nav">
+    <button mat-button (click)="previousWeek()">Previous</button>
+    <span>{{ currentDate | date }}</span>
+    <button mat-button (click)="nextWeek()">Next</button>
+  </div>
+
+  <table class="calendar-grid">
+    <tr>
+      <th></th>
+      <th *ngFor="let day of weekDays">{{ day | date : "EEE dd/MM" }}</th>
+    </tr>
+
+    <tr *ngFor="let slot of timeSlots">
+      <td class="time-cell">{{ slot }}</td>
+      <td
+        *ngFor="let day of weekDays"
+        class="slot-cell"
+        [class.available]="isAvailable(day, slot)"
+        [class.booked]="isBooked(day, slot)"
+        (click)="onSlotClick(day, slot)"
+      >
+        <ng-container *ngIf="getAppointment(day, slot) as appt">{{
+          appt.patientName
+        }}</ng-container>
+      </td>
+    </tr>
+  </table>
+</div>

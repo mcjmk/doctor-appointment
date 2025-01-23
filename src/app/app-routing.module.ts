@@ -9,6 +9,8 @@ import { AuthGuard } from './guard/auth.guard';
 import { DoctorsComponent } from './doctors/doctors/doctors.component';
 import { AdminPanelComponent } from './admin/admin-panel/admin-panel.component';
 import { AppointmentsComponent } from './appointments/appointments.component';
+import { AvailabilityFormComponent } from './calendar/availability-form/availability-form.component';
+import { AbsenceFormComponent } from './calendar/absence-form/absence-form.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -20,9 +22,24 @@ const routes: Routes = [
   },
   {
     path: 'calendar',
-    component: CalendarViewComponent,
-    canActivate: [AuthGuard],
-    data: { role: 'doctor' },
+    children: [
+      {
+        path: '',
+        component: CalendarViewComponent,
+      },
+      {
+        path: 'availability',
+        component: AvailabilityFormComponent,
+        canActivate: [AuthGuard],
+        data: { role: 'doctor' },
+      },
+      {
+        path: 'absence',
+        component: AbsenceFormComponent,
+        canActivate: [AuthGuard],
+        data: { role: 'doctor' },
+      },
+    ],
   },
   {
     path: 'appointments',

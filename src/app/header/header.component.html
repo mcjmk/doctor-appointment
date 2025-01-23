@@ -1,15 +1,15 @@
 <mat-toolbar color="primary">
   <span><a routerLink="/home">Strona Główna</a></span>
-
   <button mat-button routerLink="/doctors">Lekarze</button>
 
-  <ng-container *ngIf="authService.isDoctor()">
-    <button mat-button routerLink="/calendar">Calendar</button>
+  <ng-container *ngIf="authService.isPatient()">
+    <button mat-button routerLink="/calendar">Kalendarz</button>
+    <button mat-button routerLink="/appointments">Moje wizyty</button>
+    <button mat-button routerLink="/cart">Koszyk</button>
   </ng-container>
 
-  <ng-container *ngIf="authService.isPatient()">
-    <button mat-button routerLink="/appointments">My Appointments</button>
-    <button mat-button routerLink="/cart">Cart</button>
+  <ng-container *ngIf="authService.isDoctor()">
+    <button mat-button routerLink="/calendar">Kalendarz</button>
   </ng-container>
 
   <ng-container *ngIf="authService.isAdmin()">
