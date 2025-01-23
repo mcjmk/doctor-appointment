@@ -1,9 +1,11 @@
-import { MatOptionModule } from '@angular/material/core';
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+
+import { MatOptionModule } from '@angular/material/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { AppRoutingModule } from './app-routing.module';
-import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FirestoreModule } from '@angular/fire/firestore';
 
@@ -26,8 +28,9 @@ import { HistoryComponent } from './history/history.component';
 import { DoctorsComponent } from './doctors/doctors/doctors.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
-import { CommonModule } from '@angular/common';
+import { MatDialogModule } from '@angular/material/dialog';
 import { AdminModule } from './admin/admin.module';
+import { CalendarModule } from './calendar/calendar.module';
 @NgModule({
   declarations: [
     AppComponent,
@@ -48,6 +51,7 @@ import { AdminModule } from './admin/admin.module';
     MatToolbarModule,
     MatOptionModule,
     MatSelectModule,
+    MatDialogModule,
     MatTableModule,
     MatSelectModule,
     FormsModule,
@@ -57,6 +61,7 @@ import { AdminModule } from './admin/admin.module';
     CommonModule,
     BrowserAnimationsModule,
     AuthModule,
+    CalendarModule,
   ],
   providers: [provideAnimationsAsync()],
   exports: [HeaderComponent],

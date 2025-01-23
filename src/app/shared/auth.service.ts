@@ -66,6 +66,10 @@ export class AuthService {
     });
   }
 
+  getCurrentUser(): Promise<firebase.User | null> {
+    return this.angularFireAuth.currentUser;
+  }
+
   isAdmin(): boolean {
     return this.userRole === 'admin';
   }
