@@ -11,6 +11,8 @@ import { AuthService } from '../../shared/auth.service';
 })
 export class AdminPanelComponent {
   users$: Observable<User[]>;
+  displayedColumns = ['email', 'role', 'status', 'actions'];
+  selectedPersistence: 'LOCAL' | 'SESSION' | 'NONE' = 'LOCAL';
 
   constructor(
     private firestore: AngularFirestore,

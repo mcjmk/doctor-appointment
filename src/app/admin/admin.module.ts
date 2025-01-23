@@ -9,6 +9,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [AdminPanelComponent],
@@ -16,6 +17,7 @@ import { MatButtonModule } from '@angular/material/button';
     BrowserAnimationsModule,
     CommonModule,
     MatCardModule,
+    FormsModule,
     MatTableModule,
     MatOptionModule,
     MatSelectModule,
