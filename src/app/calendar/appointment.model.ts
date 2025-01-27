@@ -13,8 +13,8 @@ export interface Appointment {
   id?: string;
   doctorId: string;
   patientId?: string;
-  startTime: Date;
-  endTime: Date;
+  startTime: any;
+  endTime: any;
   type: AppointmentType;
   status: AppointmentStatus;
   patientName: string;

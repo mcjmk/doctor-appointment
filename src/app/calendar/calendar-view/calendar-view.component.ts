@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from '../../shared/user';
 import { Appointment } from '../appointment.model';
-import { Observable } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { AuthService } from '../../shared/auth.service';
 import { CalendarService } from '../calendar.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -79,27 +79,31 @@ export class CalendarViewComponent implements OnInit {
 
   loadData() {
     if (this.selectedDoctorId) {
-      this.calendarService
-        .getDoctorAppointments(
+      console.log('Loading data for doctor:', this.selectedDoctorId);
+      combineLatest([
+        this.calendarService.getDoctorAppointments(
           this.selectedDoctorId,
           startOfWeek(this.currentDate),
           endOfWeek(this.currentDate)
-        )
-        .subscribe((appointments) => {
+        ),
+        this.calendarService.getDoctorAbsences(this.selectedDoctorId),
+        this.calendarService.getDoctorAvailability(this.selectedDoctorId),
+      ]).subscribe({
+        next: ([appointments, absences, availabilities]) => {
+          console.log('New data loaded:', {
+            appointments,
+            absences,
+            availabilities,
+          });
+
           this.appointments = appointments;
-        });
-
-      this.calendarService
-        .getDoctorAbsences(this.selectedDoctorId)
-        .subscribe((absences) => {
           this.absences = absences;
-        });
-
-      this.calendarService
-        .getDoctorAvailability(this.selectedDoctorId)
-        .subscribe((availabilities) => {
           this.availabilities = availabilities;
-        });
+        },
+        error: (error) => {
+          console.error('Error loading data:', error);
+        },
+      });
     }
   }
 
@@ -116,27 +120,32 @@ export class CalendarViewComponent implements OnInit {
   }
 
   isAvailable(day: Date, timeSlot: string): boolean {
-    if (this.isBooked(day, timeSlot) || this.isPast(day, timeSlot)) {
-      return false;
-    }
+    // if (this.isBooked(day, timeSlot) || this.isPast(day, timeSlot)) {
+    //   return false;
+    // }
 
-    if (
-      this.absences.some((absence) => {
-        const startDate = new Date(absence.startDate);
-        const endDate = new Date(absence.endDate);
-        return day >= startDate && day <= endDate;
-      })
-    ) {
-      return false;
-    }
+    // if (
+    //   this.absences.some((absence) => {
+    //     const startDate = new Date(absence.startDate);
+    //     const endDate = new Date(absence.endDate);
+    //     return day >= startDate && day <= endDate;
+    //   })
+    // ) {
+    //   return false;
+    // }
 
     return this.availabilities.some((availability) => {
       const startDate = new Date(availability.startDate);
       const endDate = new Date(availability.endDate);
-      const dayOfWeek = day.getDay();
+      startDate.setHours(0, 0, 0, 0);
+      endDate.setHours(23, 59, 59, 999);
+
+      const currentDate = new Date(day);
+      currentDate.setHours(0, 0, 0, 0);
 
       if (day < startDate || day > endDate) return false;
 
+      const dayOfWeek = day.getDay();
       if (availability.cyclical && !availability.weekDays.includes(dayOfWeek))
         return false;
 
@@ -150,42 +159,91 @@ export class CalendarViewComponent implements OnInit {
         const startTime = startHours * 60 + startMinutes;
         const endTime = endHours * 60 + endMinutes;
 
-        return slotTime >= startTime && slotTime < endTime;
+        return slotTime > startTime && slotTime < endTime;
       });
     });
   }
 
   isBooked(day: Date, timeSlot: string): boolean {
-    return this.appointments.some((app) => {
-      const appDate = new Date(app.startTime);
-      const appEndDate = new Date(app.endTime);
-      const [hours, minutes] = timeSlot.split(':').map(Number);
+    try {
+      return this.appointments.some((app) => {
+        // Konwersja timestamp na Date
+        const appStartTime =
+          app.startTime?.toDate?.() || new Date(app.startTime);
+        const appEndTime = app.endTime?.toDate?.() || new Date(app.endTime);
 
-      const slotStart = new Date(day);
-      slotStart.setHours(hours, minutes, 0, 0);
+        // Utwórz datę dla sprawdzanego slotu
+        const [hours, minutes] = timeSlot.split(':').map(Number);
+        const slotStart = new Date(day);
+        slotStart.setHours(hours, minutes, 0, 0);
 
-      const slotEnd = new Date(slotStart);
-      slotEnd.setMinutes(slotEnd.getMinutes() + 30);
+        const slotEnd = new Date(slotStart);
+        slotEnd.setMinutes(slotEnd.getMinutes() + 30);
 
-      return (
-        isSameDay(appDate, day) && slotStart < appEndDate && slotEnd > appDate
-      );
-    });
+        // Sprawdzamy tylko czy slot jest dokładnie tym samym czasem co wizyta
+        const isBooked =
+          isSameDay(appStartTime, day) &&
+          format(appStartTime, 'HH:mm') === timeSlot;
+
+        if (isBooked) {
+          console.log('Found booked slot:', {
+            id: app.id,
+            slotTime: timeSlot,
+            appStartTime: format(appStartTime, 'yyyy-MM-dd HH:mm'),
+            appEndTime: format(appEndTime, 'yyyy-MM-dd HH:mm'),
+          });
+        }
+
+        return isBooked;
+      });
+    } catch (error) {
+      console.error('Error in isBooked:', error);
+      return false;
+    }
   }
+
   isPast(day: Date, timeSlot: string): boolean {
     const [hours, minutes] = timeSlot.split(':').map(Number);
     const slotDate = new Date(day);
+    const now = new Date();
     slotDate.setHours(hours, minutes, 0, 0);
-    return slotDate < new Date();
+    now.setMilliseconds(0);
+    return slotDate.getTime() < now.getTime();
   }
 
   getAppointment(day: Date, timeSlot: string): Appointment | null {
-    return (
-      this.appointments.find((app) => {
-        const appDate = new Date(app.startTime);
-        return isSameDay(appDate, day) && format(appDate, 'HH:mm') === timeSlot;
-      }) || null
-    );
+    console.log('Finding appointment for:', { day, timeSlot });
+    console.log('Available appointments:', this.appointments);
+
+    try {
+      return (
+        this.appointments.find((app) => {
+          // Upewnij się, że mamy poprawne daty
+          const appStartTime =
+            app.startTime?.toDate?.() || new Date(app.startTime);
+
+          // Format godziny z appointment
+          const appointmentTimeStr = format(appStartTime, 'HH:mm');
+
+          const matchingDay = isSameDay(appStartTime, day);
+          const matchingTime = appointmentTimeStr === timeSlot;
+
+          console.log('Checking appointment:', {
+            id: app.id,
+            startTime: appStartTime,
+            timeSlot,
+            appointmentTimeStr,
+            matchingDay,
+            matchingTime,
+          });
+
+          return matchingDay && matchingTime;
+        }) || null
+      );
+    } catch (error) {
+      console.error('Error in getAppointment:', error);
+      return null;
+    }
   }
 
   onSlotClick(day: Date, timeSlot: string) {

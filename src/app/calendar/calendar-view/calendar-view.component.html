@@ -43,9 +43,12 @@
         [class.absence]="!isAvailable(day, slot)"
         (click)="onSlotClick(day, slot)"
       >
-        <ng-container *ngIf="getAppointment(day, slot) as appt">{{
-          appt.patientName
-        }}</ng-container>
+        <ng-container *ngIf="getAppointment(day, slot) as appt">
+          <div class="appointment-info">
+            {{ appt.patientName }}
+            <small>({{ appt.status }})</small>
+          </div>
+        </ng-container>
       </td>
     </tr>
   </table>
