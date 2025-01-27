@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Availability } from './availability.model';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { Absence } from './absence.model';
 import { Appointment } from './appointment.model';
 import { User } from '../shared/user';
@@ -80,7 +80,18 @@ export class CalendarService {
           .where('startTime', '<=', endDate)
           .orderBy('startTime')
       )
-      .valueChanges({ idField: 'id' });
+      .valueChanges({ idField: 'id' })
+      .pipe(
+        map((appointments) => {
+          console.log('Raw appointments from Firebase:', appointments);
+
+          return appointments.map((app) => ({
+            ...app,
+            startTime: app.startTime?.toDate?.() || new Date(app.startTime),
+            endTime: app.endTime?.toDate?.() || new Date(app.endTime),
+          }));
+        })
+      );
   }
 
   getPatientAppointments(patientId: string): Observable<Appointment[]> {
@@ -91,9 +102,21 @@ export class CalendarService {
           .where('startTime', '>=', new Date())
           .orderBy('startTime')
       )
-      .valueChanges({ idField: 'id' });
+      .valueChanges({ idField: 'id' })
+      .pipe(
+        map((appointments) =>
+          appointments.map((app) => ({
+            ...app,
+            startTime: this.fromFirebaseDate(app.startTime),
+            endTime: this.fromFirebaseDate(app.endTime),
+          }))
+        )
+      );
   }
 
-
-
+  fromFirebaseDate = (timestamp: any): Date => {
+    if (timestamp instanceof Date) return timestamp;
+    if (timestamp?.toDate) return timestamp.toDate();
+    return new Date(timestamp);
+  };
 }

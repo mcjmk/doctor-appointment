@@ -58,7 +58,11 @@ export class AppointmentDialogComponent {
 
         this.calendarService
           .createAppointment(appointment)
-          .then(() => this.dialogRef.close(true));
+
+          .then(() => {
+            console.log('Appointment created:', appointment); // log
+            this.dialogRef.close(true);
+          });
       });
       this.dialogRef.close(true);
     }

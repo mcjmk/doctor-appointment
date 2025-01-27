@@ -49,3 +49,11 @@ mat-form-field {
   background-color: #e6ffe6;
   font-weight: bold;
 }
+
+.booked {
+  color: red;
+}
+
+.available {
+  color: pink;
+}
