@@ -1,56 +1,61 @@
-<div class="calendar-container">
-  <mat-form-field *ngIf="authService.isPatient()">
-    <mat-label>Select Doctor</mat-label>
-    <mat-select [(ngModel)]="selectedDoctorId" (selectionChange)="loadData()">
-      <mat-option *ngFor="let doctor of doctors$ | async" [value]="doctor.uid">
-        {{ doctor.email }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+<ng-container *ngIf="authService.currentUser | async as user">
+  <div class="calendar-container">
+    <mat-form-field *ngIf="user.role != 'doctor'">
+      <mat-label>Select Doctor</mat-label>
+      <mat-select [(ngModel)]="selectedDoctorId" (selectionChange)="loadData()">
+        <mat-option
+          *ngFor="let doctor of doctors$ | async"
+          [value]="doctor.uid"
+        >
+          {{ doctor.email }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-  <div *ngIf="authService.isDoctor()" class="doctor-actions">
-    <button mat-raised-button routerLink="/calendar/availability">
-      Dodaj dostępność
-    </button>
-    <button mat-raised-button routerLink="/calendar/absence">
-      Dodaj nieobecność
-    </button>
+    <div *ngIf="user.role === 'doctor'" class="doctor-actions">
+      <button mat-raised-button routerLink="/calendar/availability">
+        Dodaj dostępność
+      </button>
+      <button mat-raised-button routerLink="/calendar/absence">
+        Dodaj nieobecność
+      </button>
+    </div>
+
+    <div class="week-nav">
+      <button mat-button (click)="previousWeek()">Previous</button>
+      <span>{{ currentDate | date }}</span>
+      <button mat-button (click)="nextWeek()">Next</button>
+    </div>
+
+    <table class="calendar-grid">
+      <tr>
+        <th></th>
+        <th *ngFor="let day of weekDays">{{ day | date : "EEE dd/MM" }}</th>
+      </tr>
+
+      <tr *ngFor="let slot of timeSlots">
+        <td class="time-cell" [class.current-time]="isCurrentTimeSlot(slot)">
+          {{ slot }}
+        </td>
+        <td
+          *ngFor="let day of weekDays"
+          class="slot-cell"
+          [class.today]="isTodayCell(day)"
+          [class.current-time]="isCurrentTimeSlot(slot)"
+          [class.past]="isPast(day, slot)"
+          [class.available]="isAvailable(day, slot)"
+          [class.booked]="isBooked(day, slot)"
+          [class.absence]="!isAvailable(day, slot)"
+          (click)="onSlotClick(day, slot)"
+        >
+          <ng-container *ngIf="getAppointment(day, slot) as appt">
+            <div class="appointment-info">
+              {{ appt.patientName }}
+              <small>({{ appt.status }})</small>
+            </div>
+          </ng-container>
+        </td>
+      </tr>
+    </table>
   </div>
-
-  <div class="week-nav">
-    <button mat-button (click)="previousWeek()">Previous</button>
-    <span>{{ currentDate | date }}</span>
-    <button mat-button (click)="nextWeek()">Next</button>
-  </div>
-
-  <table class="calendar-grid">
-    <tr>
-      <th></th>
-      <th *ngFor="let day of weekDays">{{ day | date : "EEE dd/MM" }}</th>
-    </tr>
-
-    <tr *ngFor="let slot of timeSlots">
-      <td class="time-cell" [class.current-time]="isCurrentTimeSlot(slot)">
-        {{ slot }}
-      </td>
-      <td
-        *ngFor="let day of weekDays"
-        class="slot-cell"
-        [class.today]="isTodayCell(day)"
-        [class.current-time]="isCurrentTimeSlot(slot)"
-        [class.past]="isPast(day, slot)"
-        [class.available]="isAvailable(day, slot)"
-        [class.booked]="isBooked(day, slot)"
-        [class.absence]="!isAvailable(day, slot)"
-        (click)="onSlotClick(day, slot)"
-      >
-        <ng-container *ngIf="getAppointment(day, slot) as appt">
-          <div class="appointment-info">
-            {{ appt.patientName }}
-            <small>({{ appt.status }})</small>
-          </div>
-        </ng-container>
-      </td>
-    </tr>
-  </table>
-</div>
+</ng-container>

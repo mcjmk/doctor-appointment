@@ -10,11 +10,7 @@ import firebase from 'firebase/compat/app';
   styleUrl: './header.component.css',
 })
 export class HeaderComponent {
-  user$: Observable<firebase.User | null>;
-
-  constructor(public authService: AuthService) {
-    this.user$ = this.authService.userData;
-  }
+  constructor(public authService: AuthService) {}
 
   logout(): void {
     this.authService.logout().catch((error) => {

@@ -17,20 +17,16 @@ import { User } from '../shared/user';
 export class AuthGuard implements CanActivate {
   constructor(private auth: AuthService, private router: Router) {}
 
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): Observable<boolean> {
-    return this.auth.userData.pipe(
+  canActivate(route: ActivatedRouteSnapshot): Observable<boolean> {
+    return this.auth.currentUser.pipe(
+      take(1),
       map((user) => {
         if (!user) {
           this.router.navigate(['/login']);
-          console.log('tried to go to: forbidden');
           return false;
         }
         const requiredRole = route.data['role'];
-        console.log(`current role: ${this.auth.userRole}`);
-        if (this.auth.userRole != requiredRole) {
+        if (requiredRole && user.role !== requiredRole) {
           this.router.navigate(['/']);
           return false;
         }

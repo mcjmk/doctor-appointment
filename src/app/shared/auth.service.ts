@@ -2,15 +2,18 @@ import { Router } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import firebase from 'firebase/compat/app';
+import { User } from './user';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   userData: Observable<firebase.User | null>;
+  currentUser: Observable<any>;
+
   userRole: string | null = null;
   userBanned: boolean = false;
 
@@ -21,19 +24,14 @@ export class AuthService {
   ) {
     this.userData = this.angularFireAuth.authState;
 
-    this.userData.subscribe((user) => {
-      if (user) {
-        this.firestore
-          .doc(`users/${user.uid}`)
-          .valueChanges()
-          .subscribe((userData: any) => {
-            this.userRole = userData?.role || null;
-          });
-      } else {
-        this.userRole = null;
-        this.userBanned = false;
-      }
-    });
+    this.currentUser = this.userData.pipe(
+      switchMap((user) => {
+        if (user) {
+          return this.firestore.doc<User>(`users/${user.uid}`).valueChanges();
+        }
+        return of(null);
+      })
+    );
   }
 
   login(email: string, password: string): Promise<void> {
@@ -53,15 +51,14 @@ export class AuthService {
         return this.createUserDocument(userCredential.user);
       })
       .then(() => {
-        this.userRole = 'patient';
-        this.userBanned = false;
         this.router.navigate(['/']);
       });
   }
 
   logout(): Promise<void> {
     return this.angularFireAuth.signOut().then(() => {
-      this.userRole = null;
+      localStorage.clear();
+      sessionStorage.clear();
       this.router.navigate(['/login']);
     });
   }
@@ -70,20 +67,20 @@ export class AuthService {
     return this.angularFireAuth.currentUser;
   }
 
-  isAdmin(): boolean {
-    return this.userRole === 'admin';
+  isAdmin(): Observable<boolean> {
+    return this.currentUser.pipe(map((user) => user?.role === 'admin'));
   }
 
-  isDoctor(): boolean {
-    return this.userRole === 'doctor';
+  isDoctor(): Observable<boolean> {
+    return this.currentUser.pipe(map((user) => user?.role === 'doctor'));
   }
 
-  isPatient(): boolean {
-    return this.userRole === 'patient';
+  isPatient(): Observable<boolean> {
+    return this.currentUser.pipe(map((user) => user?.role === 'patient'));
   }
 
-  canAddReview(): boolean {
-    return !this.userBanned && this.userRole === 'patient';
+  canAddReview(): Observable<boolean> {
+    return this.currentUser.pipe(map((user) => !user?.banned));
   }
 
   private createUserDocument(user: firebase.User): Promise<void> {
