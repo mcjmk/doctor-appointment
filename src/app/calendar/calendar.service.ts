@@ -72,12 +72,18 @@ export class CalendarService {
     startDate: Date,
     endDate: Date
   ): Observable<Appointment[]> {
+    const start = new Date(startDate);
+    start.setHours(0, 0, 0, 0);
+
+    const end = new Date(endDate);
+    end.setHours(23, 59, 59, 999);
+
     return this.firestore
       .collection<Appointment>('appointments', (ref) =>
         ref
           .where('doctorId', '==', doctorId)
-          .where('startTime', '>=', startDate)
-          .where('startTime', '<=', endDate)
+          .where('startTime', '>=', start)
+          .where('startTime', '<=', end)
           .orderBy('startTime')
       )
       .valueChanges({ idField: 'id' })

@@ -79,12 +79,15 @@ export class CalendarViewComponent implements OnInit {
 
   loadData() {
     if (this.selectedDoctorId) {
+      const start = startOfWeek(this.currentDate, { weekStartsOn: 1 });
+      const end = endOfWeek(this.currentDate, { weekStartsOn: 1 });
+
       console.log('Loading data for doctor:', this.selectedDoctorId);
       combineLatest([
         this.calendarService.getDoctorAppointments(
           this.selectedDoctorId,
-          startOfWeek(this.currentDate),
-          endOfWeek(this.currentDate)
+          start,
+          end
         ),
         this.calendarService.getDoctorAbsences(this.selectedDoctorId),
         this.calendarService.getDoctorAvailability(this.selectedDoctorId),
@@ -167,12 +170,10 @@ export class CalendarViewComponent implements OnInit {
   isBooked(day: Date, timeSlot: string): boolean {
     try {
       return this.appointments.some((app) => {
-        // Konwersja timestamp na Date
         const appStartTime =
           app.startTime?.toDate?.() || new Date(app.startTime);
         const appEndTime = app.endTime?.toDate?.() || new Date(app.endTime);
 
-        // Utwórz datę dla sprawdzanego slotu
         const [hours, minutes] = timeSlot.split(':').map(Number);
         const slotStart = new Date(day);
         slotStart.setHours(hours, minutes, 0, 0);
@@ -186,12 +187,12 @@ export class CalendarViewComponent implements OnInit {
           format(appStartTime, 'HH:mm') === timeSlot;
 
         if (isBooked) {
-          console.log('Found booked slot:', {
-            id: app.id,
-            slotTime: timeSlot,
-            appStartTime: format(appStartTime, 'yyyy-MM-dd HH:mm'),
-            appEndTime: format(appEndTime, 'yyyy-MM-dd HH:mm'),
-          });
+          // console.log('Found booked slot:', {
+          //   id: app.id,
+          //   slotTime: timeSlot,
+          //   appStartTime: format(appStartTime, 'yyyy-MM-dd HH:mm'),
+          //   appEndTime: format(appEndTime, 'yyyy-MM-dd HH:mm'),
+          // });
         }
 
         return isBooked;
@@ -203,17 +204,23 @@ export class CalendarViewComponent implements OnInit {
   }
 
   isPast(day: Date, timeSlot: string): boolean {
-    const [hours, minutes] = timeSlot.split(':').map(Number);
-    const slotDate = new Date(day);
     const now = new Date();
-    slotDate.setHours(hours, minutes, 0, 0);
-    now.setMilliseconds(0);
-    return slotDate.getTime() < now.getTime();
+    if (day < now) {
+      return true;
+    }
+    if (isSameDay(day, now)) {
+      const [hours, minutes] = timeSlot.split(':').map(Number);
+      const slotDate = new Date(day);
+      slotDate.setHours(hours, minutes, 0, 0);
+
+      return slotDate.getTime() < now.getTime();
+    }
+    return false;
   }
 
   getAppointment(day: Date, timeSlot: string): Appointment | null {
-    console.log('Finding appointment for:', { day, timeSlot });
-    console.log('Available appointments:', this.appointments);
+    // console.log('Finding appointment for:', { day, timeSlot });
+    // console.log('Available appointments:', this.appointments);
 
     try {
       return (
@@ -228,14 +235,14 @@ export class CalendarViewComponent implements OnInit {
           const matchingDay = isSameDay(appStartTime, day);
           const matchingTime = appointmentTimeStr === timeSlot;
 
-          console.log('Checking appointment:', {
-            id: app.id,
-            startTime: appStartTime,
-            timeSlot,
-            appointmentTimeStr,
-            matchingDay,
-            matchingTime,
-          });
+          // console.log('Checking appointment:', {
+          //   id: app.id,
+          //   startTime: appStartTime,
+          //   timeSlot,
+          //   appointmentTimeStr,
+          //   matchingDay,
+          //   matchingTime,
+          // });
 
           return matchingDay && matchingTime;
         }) || null
