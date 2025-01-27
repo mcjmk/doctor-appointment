@@ -64,9 +64,10 @@ export class CalendarViewComponent implements OnInit {
 
   generateTimeSlots() {
     this.timeSlots = [];
-    for (let hour = 8; hour < 20; hour++) {
-      this.timeSlots.push(`${hour}:00`);
-      this.timeSlots.push(`${hour}:30`);
+    for (let hour = 7; hour < 20; hour++) {
+      const h = hour.toString().padStart(2, '0');
+      this.timeSlots.push(`${h}:00`);
+      this.timeSlots.push(`${h}:30`);
     }
   }
 
@@ -123,19 +124,19 @@ export class CalendarViewComponent implements OnInit {
   }
 
   isAvailable(day: Date, timeSlot: string): boolean {
-    // if (this.isBooked(day, timeSlot) || this.isPast(day, timeSlot)) {
-    //   return false;
-    // }
+    if (this.isBooked(day, timeSlot) || this.isPast(day, timeSlot)) {
+      return false;
+    }
 
-    // if (
-    //   this.absences.some((absence) => {
-    //     const startDate = new Date(absence.startDate);
-    //     const endDate = new Date(absence.endDate);
-    //     return day >= startDate && day <= endDate;
-    //   })
-    // ) {
-    //   return false;
-    // }
+    if (
+      this.absences.some((absence) => {
+        const startDate = new Date(absence.startDate);
+        const endDate = new Date(absence.endDate);
+        return day >= startDate && day <= endDate;
+      })
+    ) {
+      return false;
+    }
 
     return this.availabilities.some((availability) => {
       const startDate = new Date(availability.startDate);
@@ -185,14 +186,15 @@ export class CalendarViewComponent implements OnInit {
         const isBooked =
           isSameDay(appStartTime, day) &&
           format(appStartTime, 'HH:mm') === timeSlot;
+        console.log('TI');
 
         if (isBooked) {
-          // console.log('Found booked slot:', {
-          //   id: app.id,
-          //   slotTime: timeSlot,
-          //   appStartTime: format(appStartTime, 'yyyy-MM-dd HH:mm'),
-          //   appEndTime: format(appEndTime, 'yyyy-MM-dd HH:mm'),
-          // });
+          console.log('Found booked slot:', {
+            id: app.id,
+            slotTime: timeSlot,
+            appStartTime: format(appStartTime, 'yyyy-MM-dd HH:mm'),
+            appEndTime: format(appEndTime, 'yyyy-MM-dd HH:mm'),
+          });
         }
 
         return isBooked;
@@ -205,17 +207,27 @@ export class CalendarViewComponent implements OnInit {
 
   isPast(day: Date, timeSlot: string): boolean {
     const now = new Date();
-    if (day < now) {
+
+    const dayStart = new Date(day.getFullYear(), day.getMonth(), day.getDate());
+    const todayStart = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate()
+    );
+
+    if (dayStart.getTime() < todayStart.getTime()) {
       return true;
     }
-    if (isSameDay(day, now)) {
-      const [hours, minutes] = timeSlot.split(':').map(Number);
-      const slotDate = new Date(day);
-      slotDate.setHours(hours, minutes, 0, 0);
 
-      return slotDate.getTime() < now.getTime();
+    if (dayStart.getTime() > todayStart.getTime()) {
+      return false;
     }
-    return false;
+
+    const [hours, minutes] = timeSlot.split(':').map(Number);
+    const slotDate = new Date(day);
+    slotDate.setHours(hours, minutes, 0, 0);
+
+    return slotDate.getTime() < now.getTime();
   }
 
   getAppointment(day: Date, timeSlot: string): Appointment | null {

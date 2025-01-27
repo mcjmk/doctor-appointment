@@ -38,6 +38,7 @@
         class="slot-cell"
         [class.today]="isTodayCell(day)"
         [class.current-time]="isCurrentTimeSlot(slot)"
+        [class.past]="isPast(day, slot)"
         [class.available]="isAvailable(day, slot)"
         [class.booked]="isBooked(day, slot)"
         [class.absence]="!isAvailable(day, slot)"
