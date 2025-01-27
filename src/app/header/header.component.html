@@ -1,31 +1,30 @@
 <mat-toolbar color="primary">
   <span><a routerLink="/home">Strona Główna</a></span>
   <button mat-button routerLink="/doctors">Lekarze</button>
+  <ng-container *ngIf="authService.currentUser | async as user">
+    <ng-container *ngIf="user.role === 'patient'">
+      <button mat-button routerLink="/calendar">Harmonogramy lekarzy</button>
+      <button mat-button routerLink="/appointments">Moje wizyty</button>
+      <button mat-button routerLink="/cart">Koszyk</button>
+    </ng-container>
 
-  <ng-container *ngIf="authService.isPatient()">
-    <button mat-button routerLink="/calendar">Harmonogramy lekarzy</button>
-    <button mat-button routerLink="/appointments">Moje wizyty</button>
-    <button mat-button routerLink="/cart">Koszyk</button>
-  </ng-container>
+    <ng-container *ngIf="user.role === 'doctor'">
+      <button mat-button routerLink="/calendar">Kalendarz</button>
+    </ng-container>
 
-  <ng-container *ngIf="authService.isDoctor()">
-    <button mat-button routerLink="/calendar">Kalendarz</button>
-  </ng-container>
+    <ng-container *ngIf="user.role === 'admin'">
+      <button mat-button routerLink="/adminPanel">Admin Panel</button>
+    </ng-container>
 
-  <ng-container *ngIf="authService.isAdmin()">
-    <button mat-button routerLink="/adminPanel">Admin Panel</button>
-  </ng-container>
-
-  <span class="spacer"></span>
-
-  <ng-container *ngIf="user$ | async as user; else guestLinks">
+    <span class="spacer"></span>
     <span>Hello {{ user.email }}</span>
     <span *ngIf="authService.userRole">({{ authService.userRole }})</span>
     <button mat-button (click)="logout()">Logout</button>
   </ng-container>
 
-  <ng-template #guestLinks>
+  <ng-container *ngIf="!(authService.currentUser | async)">
+    <span class="spacer"></span>
     <button mat-button routerLink="/login">Login</button>
     <button mat-button routerLink="/register">Register</button>
-  </ng-template>
+  </ng-container>
 </mat-toolbar>
