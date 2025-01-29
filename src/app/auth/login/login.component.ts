@@ -26,7 +26,6 @@ export class LoginComponent {
   onSubmit(): void {
     if (this.loginForm.valid) {
       const { email, password } = this.loginForm.value;
-      this.authService.login(email, password);
       this.authService
         .login(email, password)
         .then(() => {

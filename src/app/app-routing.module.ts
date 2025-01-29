@@ -22,6 +22,8 @@ const routes: Routes = [
   },
   {
     path: 'calendar',
+    canActivate: [AuthGuard],
+    data: { roles: ['patient', 'doctor'] },
     children: [
       {
         path: '',
