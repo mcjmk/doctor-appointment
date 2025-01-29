@@ -15,21 +15,12 @@ export class AdminService {
     private authService: AuthService
   ) {}
 
-  // Get all users
   getAllUsers(): Observable<User[]> {
     return this.firestore
       .collection<User>('users')
       .valueChanges({ idField: 'uid' });
   }
 
-  // Get only doctors
-  getDoctors(): Observable<User[]> {
-    return this.firestore
-      .collection<User>('users', (ref) => ref.where('role', '==', 'doctor'))
-      .valueChanges({ idField: 'uid' });
-  }
-
-  // Update user role
   async updateUserRole(userId: string, newRole: string): Promise<void> {
     try {
       await this.firestore.doc(`users/${userId}`).update({
@@ -42,7 +33,6 @@ export class AdminService {
     }
   }
 
-  // Toggle user ban status
   async toggleUserBan(
     userId: string,
     currentBanStatus: boolean
@@ -58,7 +48,6 @@ export class AdminService {
     }
   }
 
-  // Create new doctor
   async createDoctor(doctorData: any): Promise<void> {
     try {
       const credential = await this.auth.createUserWithEmailAndPassword(
@@ -100,13 +89,6 @@ export class AdminService {
       console.error('Error updating doctor:', error);
       throw error;
     }
-  }
-
-  getDoctorById(uid: string): Observable<User | null> {
-    return this.firestore
-      .doc<User>(`users/${uid}`)
-      .valueChanges()
-      .pipe(map((user) => (user ? { ...user, uid } : null)));
   }
 
   updatePersistence(type: 'LOCAL' | 'SESSION' | 'NONE'): Promise<void> {

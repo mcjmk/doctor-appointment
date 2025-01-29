@@ -83,6 +83,19 @@ export class AuthService {
     return this.currentUser.pipe(map((user) => !user?.banned));
   }
 
+  getDoctors(): Observable<User[]> {
+    return this.firestore
+      .collection<User>('users', (ref) => ref.where('role', '==', 'doctor'))
+      .valueChanges({ idField: 'uid' });
+  }
+
+  getDoctorById(uid: string): Observable<User | null> {
+    return this.firestore
+      .doc<User>(`users/${uid}`)
+      .valueChanges()
+      .pipe(map((user) => (user ? { ...user, uid } : null)));
+  }
+
   private createUserDocument(user: firebase.User): Promise<void> {
     const userRef = this.firestore.collection('users').doc(user.uid);
     const userProfile = {

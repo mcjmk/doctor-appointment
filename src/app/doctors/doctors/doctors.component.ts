@@ -1,3 +1,4 @@
+import { AuthService } from './../../shared/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
@@ -28,8 +29,8 @@ import { AdminService } from '../../admin/admin.service';
 export class DoctorsComponent implements OnInit {
   doctors$: Observable<User[]>;
 
-  constructor(private adminService: AdminService, private router: Router) {
-    this.doctors$ = this.adminService.getDoctors();
+  constructor(private authService: AuthService, private router: Router) {
+    this.doctors$ = this.authService.getDoctors();
   }
 
   ngOnInit(): void {}
