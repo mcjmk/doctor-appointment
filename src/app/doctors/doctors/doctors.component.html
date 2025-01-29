@@ -5,7 +5,7 @@
     <mat-card *ngFor="let doctor of doctors$ | async" class="doctor-card">
       <mat-card-header>
         <mat-card-title class="mb-2">
-          {{ doctor.firstName }} {{ doctor.lastName }}
+          {{ doctor.displayName }}
         </mat-card-title>
         <mat-card-subtitle>
           {{ doctor.doctorDetails?.specialization }}
