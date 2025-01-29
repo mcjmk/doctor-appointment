@@ -3,6 +3,8 @@ import { User } from '../../shared/user';
 import { Observable } from 'rxjs';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AuthService } from '../../shared/auth.service';
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { AdminService } from '../admin.service';
 
 @Component({
   selector: 'app-admin-panel',
@@ -14,24 +16,25 @@ export class AdminPanelComponent {
   displayedColumns = ['email', 'role', 'status', 'actions'];
   selectedPersistence: 'LOCAL' | 'SESSION' | 'NONE' = 'LOCAL';
 
-  constructor(
-    private firestore: AngularFirestore,
-    private authService: AuthService
-  ) {
-    this.users$ = this.firestore.collection<User>('users').valueChanges();
+  constructor(private adminService: AdminService) {
+    this.users$ = this.adminService.getAllUsers();
   }
 
   updateRole(userId: string, newRole: string): void {
-    this.firestore.doc(`users/${userId}`).update({ role: newRole });
+    this.adminService
+      .updateUserRole(userId, newRole)
+      .catch((error) => console.error('Error updating role:', error));
   }
 
   toggleBan(userId: string, currentBanStatus: boolean): void {
-    this.firestore.doc(`users/${userId}`).update({ banned: !currentBanStatus });
+    this.adminService
+      .toggleUserBan(userId, currentBanStatus)
+      .catch((error) => console.error('Error toggling ban status:', error));
   }
 
   updatePersistence(type: 'LOCAL' | 'SESSION' | 'NONE'): void {
-    this.authService
-      .setPersistence(type)
+    this.adminService
+      .updatePersistence(type)
       .catch((error) => console.error('Error updating persistence:', error));
   }
 }
