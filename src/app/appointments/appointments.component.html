@@ -1,1 +1,36 @@
-<p>appointments works!</p>
+<div class="cart-container">
+  <h2>Historyczne wizyty</h2>
+  <!-- <mat-card> -->
+  <!-- <div *ngIf="upcomingAppointments.length === 0" class="no-appointments">
+    Brak
+  </div>
+
+  <mat-card
+    *ngFor="let appointment of upcomingAppointments"
+    class="appointment-card"
+  >
+    <mat-card-header>
+      <mat-card-title> Wizyta </mat-card-title>
+      <mat-card-subtitle>
+        {{ appointment.startTime | date : "full" }}
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <p>Dane pacjenta: {{ appointment.patientName }}</p>
+      <p>Typ wizyty: {{ appointment.type }}</p>
+      <p>Status: {{ appointment.status }}</p>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button
+        *ngIf="appointment.status !== 'odwołana'"
+        mat-raised-button
+        color="warn"
+        (click)="cancelAppointment(appointment)"
+      >
+        Odwołaj wizytę
+      </button>
+    </mat-card-actions> -->
+  <!-- </mat-card> -->
+</div>

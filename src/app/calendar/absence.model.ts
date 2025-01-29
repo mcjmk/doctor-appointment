@@ -1,7 +1,7 @@
 export interface Absence {
   id?: string;
   doctorId: string;
-  startDate: Date;
-  endDate: Date;
+  startDate: any;
+  endDate: any;
   description?: string;
 }
