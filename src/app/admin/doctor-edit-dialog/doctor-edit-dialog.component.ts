@@ -1,6 +1,10 @@
 import { Component, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { User, Specialization } from '../../shared/user';
 
 @Component({
@@ -85,17 +89,25 @@ export class DoctorEditDialogComponent {
   onSubmit(): void {
     if (this.doctorForm.valid) {
       const formValue = this.doctorForm.value;
-      const doctorData = {
-        firstName: formValue.firstName,
-        lastName: formValue.lastName,
+      const trimmedValues = {
+        firstName: formValue.firstName.trim(),
+        lastName: formValue.lastName.trim(),
         displayName:
-          formValue.displayName ||
-          `${formValue.firstName} ${formValue.lastName}`,
+          formValue.displayName.trim() ||
+          `${formValue.firstName.trim()} ${formValue.lastName.trim()}`,
+        specialization: formValue.specialization.trim(),
+        description: formValue.description.trim(),
+      };
+
+      const doctorData = {
+        firstName: trimmedValues.firstName,
+        lastName: trimmedValues.lastName,
+        displayName: trimmedValues.displayName,
         doctorDetails: {
-          firstName: formValue.firstName,
-          lastName: formValue.lastName,
-          specialization: formValue.specialization,
-          description: formValue.description,
+          firstName: trimmedValues.firstName,
+          lastName: trimmedValues.lastName,
+          specialization: trimmedValues.specialization,
+          description: trimmedValues.description,
         },
       };
       this.dialogRef.close(doctorData);
