@@ -12,6 +12,7 @@ export interface DoctorDetails {
   firstName: string;
   lastName: string;
   specialization: Specialization;
+  description?: string;
 }
 
 export interface User {

@@ -9,20 +9,24 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DoctorEditDialogComponent } from './doctor-edit-dialog/doctor-edit-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatInputModule } from '@angular/material/input';
 
 @NgModule({
-  declarations: [AdminPanelComponent],
+  declarations: [AdminPanelComponent, DoctorEditDialogComponent],
   imports: [
-    BrowserAnimationsModule,
     CommonModule,
-    MatCardModule,
     FormsModule,
+    ReactiveFormsModule,
     MatTableModule,
-    MatOptionModule,
+    MatCardModule,
+    MatButtonModule,
     MatSelectModule,
     MatFormFieldModule,
-    MatButtonModule,
+    MatInputModule,
+    MatDialogModule,
   ],
   exports: [AdminPanelComponent],
 })

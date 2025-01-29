@@ -182,11 +182,9 @@ export class CalendarViewComponent implements OnInit {
         const slotEnd = new Date(slotStart);
         slotEnd.setMinutes(slotEnd.getMinutes() + 30);
 
-        // Sprawdzamy tylko czy slot jest dokładnie tym samym czasem co wizyta
         const isBooked =
           isSameDay(appStartTime, day) &&
           format(appStartTime, 'HH:mm') === timeSlot;
-        console.log('TI');
 
         if (isBooked) {
           console.log('Found booked slot:', {
@@ -231,13 +229,9 @@ export class CalendarViewComponent implements OnInit {
   }
 
   getAppointment(day: Date, timeSlot: string): Appointment | null {
-    // console.log('Finding appointment for:', { day, timeSlot });
-    // console.log('Available appointments:', this.appointments);
-
     try {
       return (
         this.appointments.find((app) => {
-          // Upewnij się, że mamy poprawne daty
           const appStartTime =
             app.startTime?.toDate?.() || new Date(app.startTime);
 
