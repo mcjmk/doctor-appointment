@@ -123,7 +123,17 @@ export class CalendarViewComponent implements OnInit {
     this.loadData();
   }
 
-  isAbsent(day: Date) {
+  isPast(day: Date, timeSlot: string): boolean {
+    const now = new Date();
+    const [hours, minutes] = timeSlot.split(':').map(Number);
+
+    const slotDate = new Date(day);
+    slotDate.setHours(hours, minutes, 0, 0);
+
+    return slotDate < now;
+  }
+
+  isDoctorAbsent(day: Date) {
     return this.absences.some((absence) => {
       const absenceStart = new Date(absence.startDate.toDate());
       const absenceEnd = new Date(absence.endDate.toDate());
@@ -135,51 +145,41 @@ export class CalendarViewComponent implements OnInit {
     });
   }
 
-  isAvailable(day: Date, timeSlot: string): boolean {
-    if (this.isAbsent(day)) return false;
-
-    if (this.isBooked(day, timeSlot) || this.isPast(day, timeSlot)) {
-      return false;
-    }
-
-    if (
-      this.absences.some((absence) => {
-        const startDate = new Date(absence.startDate);
-        const endDate = new Date(absence.endDate);
-        return day >= startDate && day <= endDate;
-      })
-    ) {
-      return false;
-    }
-
+  isDoctorAvailable(day: Date, timeSlot: string): boolean {
     return this.availabilities.some((availability) => {
-      const startDate = new Date(availability.startDate);
-      const endDate = new Date(availability.endDate);
+      const startDate = new Date(availability.startDate.toDate());
+      const endDate = new Date(availability.endDate.toDate());
       startDate.setHours(0, 0, 0, 0);
       endDate.setHours(23, 59, 59, 999);
 
-      const currentDate = new Date(day);
-      currentDate.setHours(0, 0, 0, 0);
-
       if (day < startDate || day > endDate) return false;
-
       const dayOfWeek = day.getDay();
-      if (availability.cyclical && !availability.weekDays.includes(dayOfWeek))
+      if (availability.cyclical && !availability.weekDays.includes(dayOfWeek)) {
         return false;
+      }
 
       return availability.slots.some((slot) => {
         const [startHours, startMinutes] = slot.start.split(':').map(Number);
         const [endHours, endMinutes] = slot.end.split(':').map(Number);
-
         const [slotHours, slotMinutes] = timeSlot.split(':').map(Number);
 
         const slotTime = slotHours * 60 + slotMinutes;
         const startTime = startHours * 60 + startMinutes;
         const endTime = endHours * 60 + endMinutes;
 
-        return slotTime > startTime && slotTime < endTime;
+        return slotTime >= startTime && slotTime < endTime;
       });
     });
+  }
+
+  isAvailable(day: Date, timeSlot: string): boolean {
+    if (this.isPast(day, timeSlot)) return false;
+    if (this.isDoctorAvailable(day, timeSlot)) {
+      if (this.isDoctorAbsent(day) || this.isBooked(day, timeSlot))
+        return false;
+      return true;
+    }
+    return false;
   }
 
   isBooked(day: Date, timeSlot: string): boolean {
@@ -215,31 +215,6 @@ export class CalendarViewComponent implements OnInit {
       console.error('Error in isBooked:', error);
       return false;
     }
-  }
-
-  isPast(day: Date, timeSlot: string): boolean {
-    const now = new Date();
-
-    const dayStart = new Date(day.getFullYear(), day.getMonth(), day.getDate());
-    const todayStart = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate()
-    );
-
-    if (dayStart.getTime() < todayStart.getTime()) {
-      return true;
-    }
-
-    if (dayStart.getTime() > todayStart.getTime()) {
-      return false;
-    }
-
-    const [hours, minutes] = timeSlot.split(':').map(Number);
-    const slotDate = new Date(day);
-    slotDate.setHours(hours, minutes, 0, 0);
-
-    return slotDate.getTime() < now.getTime();
   }
 
   getAppointment(day: Date, timeSlot: string): Appointment | null {
