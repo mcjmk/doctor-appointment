@@ -7,7 +7,7 @@
           *ngFor="let doctor of doctors$ | async"
           [value]="doctor.uid"
         >
-          {{ doctor.email }}
+          {{ doctor.displayName }}, {{ doctor.doctorDetails?.specialization }}
         </mat-option>
       </mat-select>
     </mat-form-field>

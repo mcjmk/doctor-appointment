@@ -20,6 +20,15 @@
               <mat-option value="admin">Admin</mat-option>
             </mat-select>
           </mat-form-field>
+
+          <button
+            *ngIf="user.role === 'doctor'"
+            mat-button
+            color="primary"
+            (click)="editDoctorDetails(user)"
+          >
+            Edit Details
+          </button>
         </td>
       </ng-container>
 
