@@ -123,7 +123,21 @@ export class CalendarViewComponent implements OnInit {
     this.loadData();
   }
 
+  isAbsent(day: Date) {
+    return this.absences.some((absence) => {
+      const absenceStart = new Date(absence.startDate.toDate());
+      const absenceEnd = new Date(absence.endDate.toDate());
+      absenceStart.setHours(0, 0, 0, 0);
+      absenceEnd.setHours(23, 59, 59, 999);
+      const checkDay = new Date(day);
+      checkDay.setHours(0, 0, 0, 0);
+      return checkDay >= absenceStart && checkDay <= absenceEnd;
+    });
+  }
+
   isAvailable(day: Date, timeSlot: string): boolean {
+    if (this.isAbsent(day)) return false;
+
     if (this.isBooked(day, timeSlot) || this.isPast(day, timeSlot)) {
       return false;
     }

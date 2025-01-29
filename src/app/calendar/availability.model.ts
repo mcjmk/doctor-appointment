@@ -6,8 +6,8 @@ export interface TimeSlot {
 export interface Availability {
   id?: string;
   doctorId: string;
-  startDate: Date;
-  endDate: Date;
+  startDate: any;
+  endDate: any;
   cyclical: boolean;
   slots: TimeSlot[];
   weekDays: number[];
