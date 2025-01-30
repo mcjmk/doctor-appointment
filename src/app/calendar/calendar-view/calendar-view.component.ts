@@ -263,4 +263,16 @@ export class CalendarViewComponent implements OnInit {
       now.getMinutes() < minutes + 30
     );
   }
+
+  getAppointmentsForDay(day: Date): Appointment[] {
+    return this.appointments.filter((app) => {
+      const appStartTime = app.startTime?.toDate?.() || new Date(app.startTime);
+      return isSameDay(appStartTime, day);
+    });
+  }
+
+  getAppointmentCountForDay(day: Date): number {
+    return this.getAppointmentsForDay(day).length;
+  }
+
 }
