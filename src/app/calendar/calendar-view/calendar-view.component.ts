@@ -12,7 +12,6 @@ import {
   addWeeks,
   subWeeks,
   isSameDay,
-  format,
   isToday,
 } from 'date-fns';
 import { AppointmentDialogComponent } from '../appointment-dialog/appointment-dialog.component';
@@ -124,52 +123,19 @@ export class CalendarViewComponent implements OnInit {
   }
 
   isPast(day: Date, timeSlot: string): boolean {
-    const now = new Date();
-    const [hours, minutes] = timeSlot.split(':').map(Number);
-
-    const slotDate = new Date(day);
-    slotDate.setHours(hours, minutes, 0, 0);
-
-    return slotDate < now;
+    return this.calendarService.isPast(day, timeSlot);
   }
 
-  isDoctorAbsent(day: Date) {
-    return this.absences.some((absence) => {
-      const absenceStart = new Date(absence.startDate.toDate());
-      const absenceEnd = new Date(absence.endDate.toDate());
-      absenceStart.setHours(0, 0, 0, 0);
-      absenceEnd.setHours(23, 59, 59, 999);
-      const checkDay = new Date(day);
-      checkDay.setHours(0, 0, 0, 0);
-      return checkDay >= absenceStart && checkDay <= absenceEnd;
-    });
+  isDoctorAbsent(day: Date): boolean {
+    return this.calendarService.isDoctorAbsent(day, this.absences);
   }
 
   isDoctorAvailable(day: Date, timeSlot: string): boolean {
-    return this.availabilities.some((availability) => {
-      const startDate = new Date(availability.startDate.toDate());
-      const endDate = new Date(availability.endDate.toDate());
-      startDate.setHours(0, 0, 0, 0);
-      endDate.setHours(23, 59, 59, 999);
-
-      if (day < startDate || day > endDate) return false;
-      const dayOfWeek = day.getDay();
-      if (availability.cyclical && !availability.weekDays.includes(dayOfWeek)) {
-        return false;
-      }
-
-      return availability.slots.some((slot) => {
-        const [startHours, startMinutes] = slot.start.split(':').map(Number);
-        const [endHours, endMinutes] = slot.end.split(':').map(Number);
-        const [slotHours, slotMinutes] = timeSlot.split(':').map(Number);
-
-        const slotTime = slotHours * 60 + slotMinutes;
-        const startTime = startHours * 60 + startMinutes;
-        const endTime = endHours * 60 + endMinutes;
-
-        return slotTime >= startTime && slotTime < endTime;
-      });
-    });
+    return this.calendarService.isDoctorAvailable(
+      day,
+      timeSlot,
+      this.availabilities
+    );
   }
 
   isAvailable(day: Date, timeSlot: string): boolean {
@@ -183,47 +149,15 @@ export class CalendarViewComponent implements OnInit {
   }
 
   isBooked(day: Date, timeSlot: string): boolean {
-    return this.appointments.some((app) => {
-      const appStartTime = app.startTime;
-      const appEndTime = app.endTime;
-
-      return (
-        isSameDay(appStartTime, day) &&
-        format(appStartTime, 'HH:mm') <= timeSlot &&
-        timeSlot < format(appEndTime, 'HH:mm')
-      );
-    });
+    return this.calendarService.isBooked(day, timeSlot, this.appointments);
   }
 
   getAppointment(day: Date, timeSlot: string): Appointment | null {
-    try {
-      return (
-        this.appointments.find((app) => {
-          const appStartTime =
-            app.startTime?.toDate?.() || new Date(app.startTime);
-
-          // Format godziny z appointment
-          const appointmentTimeStr = format(appStartTime, 'HH:mm');
-
-          const matchingDay = isSameDay(appStartTime, day);
-          const matchingTime = appointmentTimeStr === timeSlot;
-
-          // console.log('Checking appointment:', {
-          //   id: app.id,
-          //   startTime: appStartTime,
-          //   timeSlot,
-          //   appointmentTimeStr,
-          //   matchingDay,
-          //   matchingTime,
-          // });
-
-          return matchingDay && matchingTime;
-        }) || null
-      );
-    } catch (error) {
-      console.error('Error in getAppointment:', error);
-      return null;
-    }
+    return this.calendarService.getAppointment(
+      day,
+      timeSlot,
+      this.appointments
+    );
   }
 
   onSlotClick(day: Date, timeSlot: string) {
@@ -264,14 +198,10 @@ export class CalendarViewComponent implements OnInit {
     );
   }
 
-  getAppointmentsForDay(day: Date): Appointment[] {
-    return this.appointments.filter((app) => {
-      const appStartTime = app.startTime?.toDate?.() || new Date(app.startTime);
-      return isSameDay(appStartTime, day) && app.status != 'odwołana';
-    });
-  }
-
   getAppointmentCountForDay(day: Date): number {
-    return this.getAppointmentsForDay(day).length;
+    return this.calendarService.getAppointmentCountForDay(
+      day,
+      this.appointments
+    );
   }
 }
