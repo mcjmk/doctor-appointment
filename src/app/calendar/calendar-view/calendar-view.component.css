@@ -47,6 +47,23 @@ mat-form-field {
   font-weight: bold;
 }
 
+.calendar-grid {
+  table-layout: fixed;
+  width: 64%;
+}
+
+.calendar-grid th {
+  width: calc(100% / 10);
+  min-width: 120px;
+  max-width: 200px;
+}
+
+.calendar-grid td {
+  width: calc(100% / 10);
+  min-width: 120px;
+  max-width: 200px;
+}
+
 .booked {
   color: red;
 }
