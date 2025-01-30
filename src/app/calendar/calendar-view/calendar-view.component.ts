@@ -64,7 +64,7 @@ export class CalendarViewComponent implements OnInit {
 
   generateTimeSlots() {
     this.timeSlots = [];
-    for (let hour = 7; hour < 20; hour++) {
+    for (let hour = 5; hour < 23; hour++) {
       const h = hour.toString().padStart(2, '0');
       this.timeSlots.push(`${h}:00`);
       this.timeSlots.push(`${h}:30`);
@@ -267,12 +267,11 @@ export class CalendarViewComponent implements OnInit {
   getAppointmentsForDay(day: Date): Appointment[] {
     return this.appointments.filter((app) => {
       const appStartTime = app.startTime?.toDate?.() || new Date(app.startTime);
-      return isSameDay(appStartTime, day);
+      return isSameDay(appStartTime, day) && app.status != 'odwołana';
     });
   }
 
   getAppointmentCountForDay(day: Date): number {
     return this.getAppointmentsForDay(day).length;
   }
-
 }
