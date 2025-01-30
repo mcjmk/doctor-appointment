@@ -179,7 +179,7 @@ export class CalendarViewComponent implements OnInit {
     }
   }
 
-  isTodayCell(day: Date): boolean {
+  isToday(day: Date): boolean {
     return isToday(day);
   }
 
@@ -187,15 +187,15 @@ export class CalendarViewComponent implements OnInit {
     const now = new Date();
     const [hours, minutes] = slot.split(':').map(Number);
 
-    const slotDate = new Date();
-    slotDate.setHours(hours, minutes, 0, 0);
-
     return (
-      isSameDay(now, slotDate) &&
       now.getHours() === hours &&
       now.getMinutes() >= minutes &&
       now.getMinutes() < minutes + 30
     );
+  }
+
+  isCurrentDateTimeSlot(day: Date, slot: string): boolean {
+    return isToday(day) && this.isCurrentTimeSlot(slot);
   }
 
   getAppointmentCountForDay(day: Date): number {

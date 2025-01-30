@@ -30,10 +30,7 @@
     <table class="calendar-grid">
       <tr>
         <th></th>
-        <th
-          *ngFor="let day of weekDays"
-          [class.today-column]="isTodayCell(day)"
-        >
+        <th *ngFor="let day of weekDays" [class.today-column]="isToday(day)">
           <div class="column-header">
             {{ day | date : "EEE" }}, {{ day | date : "dd.MM" }}
             <div class="appointment-count">
@@ -54,6 +51,7 @@
           [class.available]="isAvailable(day, slot)"
           [class.booked]="isBooked(day, slot)"
           [class.absence]="isDoctorAbsent(day)"
+          [class.current-time]="isCurrentDateTimeSlot(day, slot)"
           (click)="onSlotClick(day, slot)"
         >
           <ng-container *ngIf="getAppointment(day, slot) as appt">
