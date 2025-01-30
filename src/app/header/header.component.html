@@ -4,7 +4,7 @@
   <ng-container *ngIf="authService.currentUser | async as user">
     <ng-container *ngIf="user.role === 'patient'">
       <button mat-button routerLink="/calendar">Harmonogramy lekarzy</button>
-      <button mat-button routerLink="/appointments">Moje wizyty</button>
+      <button mat-button routerLink="/appointments">Historia wizyt</button>
       <button mat-button routerLink="/cart">Koszyk</button>
     </ng-container>
 
