@@ -12,6 +12,7 @@ import { CalendarService } from '../calendar.service';
 })
 export class AppointmentDialogComponent {
   appointmentForm: FormGroup;
+  availableSlots: number = 1;
 
   constructor(
     private fb: FormBuilder,
@@ -21,6 +22,8 @@ export class AppointmentDialogComponent {
     @Inject(MAT_DIALOG_DATA)
     public data: { date: Date; timeSlot: string; doctorId: string }
   ) {
+    // this.calculateAvailableSlots();
+
     this.appointmentForm = this.fb.group({
       type: ['', Validators.required],
       patientName: ['', Validators.required],

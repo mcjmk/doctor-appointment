@@ -67,3 +67,17 @@ mat-form-field {
 .slot-cell.current-time {
   border-left: 3px solid #1976d2;
 }
+
+.week-nav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.time-scroll {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}

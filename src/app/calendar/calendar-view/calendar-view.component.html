@@ -21,15 +21,29 @@
       </button>
     </div>
 
-    <div class="week-nav">
-      <button mat-button (click)="previousWeek()">Previous</button>
-      <span>{{ currentDate | date }}</span>
-      <button mat-button (click)="nextWeek()">Next</button>
-    </div>
-
     <table class="calendar-grid">
       <tr>
-        <th></th>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <div class="time-scroll">
+          <button
+            mat-icon-button
+            (click)="scrollUp()"
+            [disabled]="!canScrollUp"
+            class="scroll-button"
+          >
+            <mat-icon>keyboard_arrow_up</mat-icon>
+          </button>
+        </div>
+      </tr>
+      <tr>
+        <th>
+          <button mat-icon-button (click)="previousWeek()">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+        </th>
         <th *ngFor="let day of weekDays" [class.today-column]="isToday(day)">
           <div class="column-header">
             {{ day | date : "EEE" }}, {{ day | date : "dd.MM" }}
@@ -38,9 +52,14 @@
             </div>
           </div>
         </th>
+        <th>
+          <button mat-icon-button (click)="nextWeek()">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </th>
       </tr>
 
-      <tr *ngFor="let slot of timeSlots">
+      <tr *ngFor="let slot of displayedTimeSlots">
         <td class="time-cell" [class.current-time]="isCurrentTimeSlot(slot)">
           {{ slot }}
         </td>
@@ -68,6 +87,28 @@
             </div>
           </ng-container>
         </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="navigation-column">
+          <div class="time-scroll">
+            <button
+              mat-icon-button
+              (click)="scrollDown()"
+              [disabled]="!canScrollDown"
+              class="scroll-button"
+            >
+              <mat-icon>keyboard_arrow_down</mat-icon>
+            </button>
+          </div>
+        </td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
       </tr>
     </table>
   </div>
