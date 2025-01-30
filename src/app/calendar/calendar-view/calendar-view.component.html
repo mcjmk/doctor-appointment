@@ -67,27 +67,42 @@
           *ngFor="let day of weekDays"
           class="slot-cell"
           [class.past]="isPast(day, slot)"
-          [class.available]="isAvailable(day, slot)"
+          [class.available]="isAvailable(day, slot) && user.role === 'patient'"
+          [class.available-doctor]="
+            isAvailable(day, slot) && user.role === 'doctor'
+          "
           [class.booked]="isBooked(day, slot)"
           [class.absence]="isDoctorAbsent(day)"
           [class.current-time]="isCurrentDateTimeSlot(day, slot)"
-          (click)="onSlotClick(day, slot)"
+          (click)="user.role === 'patient' && onSlotClick(day, slot)"
         >
           <ng-container *ngIf="getAppointment(day, slot) as appt">
             <div class="appointment-info">
-              <ng-container *ngIf="user.role === 'doctor'; else patientView">
+              <ng-container *ngIf="user.role === 'doctor'">
                 <div class="patient-name">{{ appt.patientName }}</div>
                 <div class="patient-details">
                   <small
                     >({{ appt.patientGender }}, {{ appt.patientAge }})</small
                   >
                 </div>
-                <div>{{ appt.notes }}</div>
+                <div>{{ appt.type }}</div>
               </ng-container>
-              <ng-template #patientView>
-                <div>Booked</div>
-              </ng-template>
-              <small>({{ appt.status }})</small>
+              <ng-container *ngIf="user.role === 'patient'">
+                <div
+                  *ngIf="appt.patientId === user.uid"
+                  class="own-appointment"
+                >
+                  <div class="visit-type">
+                    {{ appt.type }}
+                  </div>
+                </div>
+                <div
+                  *ngIf="appt.patientId !== user.uid"
+                  class="other-appointment"
+                >
+                  Termin zajęty
+                </div>
+              </ng-container>
             </div>
           </ng-container>
         </td>
