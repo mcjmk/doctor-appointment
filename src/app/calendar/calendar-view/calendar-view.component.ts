@@ -29,9 +29,9 @@ export class CalendarViewComponent implements OnInit {
   selectedDoctorId: string = '';
   timeSlots: string[] = [];
   currentDate = new Date();
-  displayStartHour = 7; 
+  displayStartHour = 7;
   hoursToDisplay = 6;
-  maxHour = 22; 
+  maxHour = 22;
   minHour = 6;
 
   absences: Absence[] = [];
@@ -62,7 +62,6 @@ export class CalendarViewComponent implements OnInit {
         }
       });
     }
-
   }
 
   generateTimeSlots() {
@@ -103,7 +102,10 @@ export class CalendarViewComponent implements OnInit {
             availabilities,
           });
 
-          this.appointments = appointments;
+          this.appointments = appointments.filter(
+            (app) => app.status !== 'odwołana'
+          );
+
           this.absences = absences;
           this.availabilities = availabilities;
         },
