@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Availability } from './availability.model';
-import { map, Observable } from 'rxjs';
+import { from, map, Observable, switchMap, take } from 'rxjs';
 import { Absence } from './absence.model';
 import { Appointment } from './appointment.model';
 import { User } from '../shared/user';
@@ -132,10 +132,36 @@ export class CalendarService {
   }
 
   setDoctorAbsence(absence: Absence): Promise<void> {
-    if (absence.id) {
-      return this.firestore.doc(`absences/${absence.id}`).update(absence);
-    }
-    return this.firestore.collection('absences').add(absence).then();
+    return this.getDoctorAppointments(
+      absence.doctorId,
+      absence.startDate,
+      absence.endDate
+    )
+      .pipe(
+        take(1),
+        map((appointments) => {
+          const batch = this.firestore.firestore.batch();
+          appointments
+            .filter((app) => app.status !== 'odwołana')
+            .forEach((app) => {
+              const appointmentRef = this.firestore.doc(
+                `appointments/${app.id}`
+              ).ref;
+              batch.update(appointmentRef, { status: 'odwołana' });
+            });
+
+          if (absence.id) {
+            const absenceRef = this.firestore.doc(`absences/${absence.id}`).ref;
+            batch.update(absenceRef, absence);
+          } else {
+            const absenceRef = this.firestore.collection('absences').doc().ref;
+            batch.set(absenceRef, absence);
+          }
+          return batch;
+        }),
+        switchMap((batch) => from(batch.commit()))
+      )
+      .toPromise();
   }
 
   getDoctorAbsences(doctorId: string): Observable<Absence[]> {
