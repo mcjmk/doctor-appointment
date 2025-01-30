@@ -16,24 +16,30 @@
         ></mat-datepicker-toggle>
         <mat-datepicker #startPicker></mat-datepicker>
       </mat-form-field>
-
-      <mat-form-field>
-        <mat-label>End Date</mat-label>
-        <input
-          matInput
-          [matDatepicker]="endPicker"
-          formControlName="endDate"
-          required
-        />
-        <mat-datepicker-toggle
-          matSuffix
-          [for]="endPicker"
-        ></mat-datepicker-toggle>
-        <mat-datepicker #endPicker></mat-datepicker>
-      </mat-form-field>
-
       <mat-checkbox formControlName="cyclical">Cyklicznie</mat-checkbox>
 
+      <ng-container *ngIf="availabilityForm?.get('cyclical')?.value">
+        <mat-form-field>
+          <mat-label>End Date</mat-label>
+          <input
+            matInput
+            [matDatepicker]="endPicker"
+            formControlName="endDate"
+            required
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="endPicker"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #endPicker></mat-datepicker>
+        </mat-form-field>
+      </ng-container>
+      <mat-error
+        *ngIf="availabilityForm.errors?.['dateRange']"
+        class="time-range-error"
+      >
+        Data końcowa nie może być przed początkową
+      </mat-error>
       <div *ngIf="availabilityForm.get('cyclical')?.value">
         <mat-label>Wybierz dni</mat-label>
         <mat-checkbox-group formArrayName="weekDays">
@@ -60,7 +66,7 @@
             <mat-label>End Time</mat-label>
             <input matInput type="time" formControlName="end" required />
           </mat-form-field>
-          <button mat-icon-button (click)="removeTimeSlot(i)">
+          <button mat-icon-button type="button" (click)="removeTimeSlot(i)">
             <mat-icon>delete</mat-icon>
           </button>
         </div>
