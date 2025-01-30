@@ -74,7 +74,7 @@ export class CalendarViewComponent implements OnInit {
   }
 
   generateWeekDays() {
-    const start = startOfWeek(this.currentDate);
+    const start = startOfWeek(this.currentDate, { weekStartsOn: 1 });
     this.weekDays = Array(7)
       .fill(null)
       .map((_, i) => addDays(start, i));
@@ -242,5 +242,19 @@ export class CalendarViewComponent implements OnInit {
 
   get canScrollDown(): boolean {
     return this.displayStartHour < this.maxHour - this.hoursToDisplay;
+  }
+
+  getAppointmentClass(appointment: Appointment): string {
+    const classes = ['appointment-info'];
+    if (appointment.type === 'pierwsza') {
+      classes.push('first-visit');
+    } else if (appointment.type === 'kontrolna') {
+      classes.push('follow-up');
+    } else if (appointment.type === 'choroba przewlekła') {
+      classes.push('chronic');
+    } else if (appointment.type === 'recepta') {
+      classes.push('prescription');
+    }
+    return classes.join(' ');
   }
 }
