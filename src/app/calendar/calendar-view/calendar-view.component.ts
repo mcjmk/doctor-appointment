@@ -29,7 +29,10 @@ export class CalendarViewComponent implements OnInit {
   selectedDoctorId: string = '';
   timeSlots: string[] = [];
   currentDate = new Date();
-  displayHours = 6;
+  displayStartHour = 7; 
+  hoursToDisplay = 6;
+  maxHour = 22; 
+  minHour = 6;
 
   absences: Absence[] = [];
   availabilities: Availability[] = [];
@@ -59,11 +62,12 @@ export class CalendarViewComponent implements OnInit {
         }
       });
     }
+
   }
 
   generateTimeSlots() {
     this.timeSlots = [];
-    for (let hour = 5; hour < 23; hour++) {
+    for (let hour = this.minHour; hour < this.maxHour; hour++) {
       const h = hour.toString().padStart(2, '0');
       this.timeSlots.push(`${h}:00`);
       this.timeSlots.push(`${h}:30`);
@@ -203,5 +207,38 @@ export class CalendarViewComponent implements OnInit {
       day,
       this.appointments
     );
+  }
+  get displayedTimeSlots(): string[] {
+    const slotsPerHour = 2;
+    const startIndex = (this.displayStartHour - this.minHour) * slotsPerHour;
+    const numberOfSlots = this.hoursToDisplay * slotsPerHour;
+    return this.timeSlots.slice(startIndex, startIndex + numberOfSlots);
+  }
+
+  scrollUp() {
+    if (this.displayStartHour > this.minHour) {
+      this.displayStartHour = Math.max(
+        this.minHour,
+        this.displayStartHour - this.hoursToDisplay
+      );
+    }
+  }
+
+  scrollDown() {
+    const maxStartHour = this.maxHour - this.hoursToDisplay;
+    if (this.displayStartHour < maxStartHour) {
+      this.displayStartHour = Math.min(
+        maxStartHour,
+        this.displayStartHour + this.hoursToDisplay
+      );
+    }
+  }
+
+  get canScrollUp(): boolean {
+    return this.displayStartHour > this.minHour;
+  }
+
+  get canScrollDown(): boolean {
+    return this.displayStartHour < this.maxHour - this.hoursToDisplay;
   }
 }
