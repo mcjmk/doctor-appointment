@@ -76,8 +76,12 @@
           <ng-container *ngIf="getAppointment(day, slot) as appt">
             <div class="appointment-info">
               <ng-container *ngIf="user.role === 'doctor'; else patientView">
-                {{ appt.patientName }}
-                <small>({{ appt.patientGender }}, {{ appt.patientAge }})</small>
+                <div class="patient-name">{{ appt.patientName }}</div>
+                <div class="patient-details">
+                  <small
+                    >({{ appt.patientGender }}, {{ appt.patientAge }})</small
+                  >
+                </div>
                 <div>{{ appt.notes }}</div>
               </ng-container>
               <ng-template #patientView>
