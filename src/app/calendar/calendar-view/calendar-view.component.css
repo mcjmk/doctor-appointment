@@ -46,7 +46,7 @@ mat-form-field {
 }
 
 .current-time {
-  background-color: #e6ffe6;
+  background-color: #e3f2fd;
   font-weight: bold;
 }
 
@@ -56,4 +56,13 @@ mat-form-field {
 
 .available {
   color: pink;
+}
+
+.appointment-count {
+  font-size: 0.85em;
+  color: #666;
+  margin-top: 4px;
+}
+.today-column .column-header {
+  background-color: #e3f2fd;
 }

@@ -34,9 +34,11 @@
           *ngFor="let day of weekDays"
           [class.today-column]="isTodayCell(day)"
         >
-          {{ day | date : "EEE dd/MM" }}
-          <div class="appointment-count">
-            Appointments: {{ getAppointmentCountForDay(day) }}
+          <div class="column-header">
+            {{ day | date : "EEE" }}, {{ day | date : "dd.MM" }}
+            <div class="appointment-count">
+              Wizyt: {{ getAppointmentCountForDay(day) }}
+            </div>
           </div>
         </th>
       </tr>
