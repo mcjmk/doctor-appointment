@@ -30,13 +30,16 @@ export class AvailabilityFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.availabilityForm = this.fb.group({
-      startDate: ['', Validators.required],
-      endDate: ['', Validators.required],
-      cyclical: [false],
-      weekDays: this.fb.array([]),
-      slots: this.fb.array([]),
-    });
+    this.availabilityForm = this.fb.group(
+      {
+        startDate: ['', Validators.required],
+        endDate: [''],
+        cyclical: [false],
+        weekDays: this.fb.array([]),
+        slots: this.fb.array([], [Validators.required]),
+      },
+      { validators: this.dateRangeValidator }
+    );
     this.availabilityForm
       .get('cyclical')
       ?.valueChanges.subscribe((isCyclical) => {
@@ -50,6 +53,13 @@ export class AvailabilityFormComponent implements OnInit {
           );
         }
       });
+    this.availabilityForm.get('startDate')?.valueChanges.subscribe(() => {
+      this.availabilityForm.updateValueAndValidity();
+    });
+
+    this.availabilityForm.get('endDate')?.valueChanges.subscribe(() => {
+      this.availabilityForm.updateValueAndValidity();
+    });
   }
 
   get slotsControls() {
@@ -73,6 +83,23 @@ export class AvailabilityFormComponent implements OnInit {
     slots.removeAt(index);
   }
 
+  private dateRangeValidator(group: FormGroup) {
+    const startDate = group.get('startDate')?.value;
+    const endDate = group.get('endDate')?.value;
+    const isCyclical = group.get('cyclical')?.value;
+
+    if (isCyclical && startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+
+      if (end < start) {
+        return { dateRange: true };
+      }
+    }
+
+    return null;
+  }
+
   onSubmit() {
     if (this.availabilityForm.valid) {
       this.authService.getCurrentUser().then((user) => {
@@ -82,7 +109,7 @@ export class AvailabilityFormComponent implements OnInit {
         const availability: Omit<Availability, 'id'> = {
           doctorId: user.uid,
           startDate: formValue.startDate,
-          endDate: formValue.endDate,
+          endDate: formValue.endDate || formValue.startDate,
           cyclical: formValue.cyclical,
           slots: formValue.slots,
           weekDays: formValue.cyclical
