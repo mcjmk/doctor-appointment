@@ -1,4 +1,3 @@
-<p>absence-form works!</p>
 <mat-card>
   <mat-card-title>Dodaj absencję</mat-card-title>
   <mat-card-content>
@@ -41,5 +40,11 @@
         Save Absence
       </button>
     </form>
+    <mat-error
+      *ngIf="absenceForm.errors?.['dateRange']"
+      class="time-range-error"
+    >
+      Data końcowa nie może być przed początkową
+    </mat-error>
   </mat-card-content>
 </mat-card>
