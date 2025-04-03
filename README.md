@@ -1,27 +1,62 @@
-# DoctorAppointment
+# Doctor Appointment System
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.12.
+A web application for managing doctor appointments, built with Angular and Firebase. Allows doctors to manage their availability and patients to book appointments efficiently.
 
-## Development server
+## Features
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+- User Authentication (Login/Register)
+- Interactive Calendar View
 
-## Code scaffolding
+### Doctor Panel
+- Manage availability
+- Set absence periods
+- View and manage appointments
+- Cancel appointments for a day
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+### Patient Dashboard
+- Book appointments
+- Cancel appointments
+- View appointment history
 
-## Build
+### Admin Panel
+- Manage users
+- Change data persistence options
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+## Tech Stack
 
-## Running unit tests
+- Angular 18
+- Firebase (Authentication & Realtime Database)
+- Angular Material
+- TypeScript
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## Prerequisites
 
-## Running end-to-end tests
+- Node.js (v18 or higher)
+- npm (v9 or higher)
+- Firebase account and project
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+## Setup
 
-## Further help
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/mcjmk/doctor-appointment.git
+   cd doctor-appointment
+   ```
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Set up Firebase:
+   - Create a new Firebase project
+   - Enable Authentication and Realtime Database
+   - Copy `.env.example` to `.env` and fill in your Firebase configuration values from the Firebase Console
+   - Copy `src/environments/environment.template.ts` to `src/environments/environment.ts` and `src/environments/environment.development.ts`
+
+4. Start the development server:
+   ```bash
+   npm start
+   ```
+
+5. Go to to `http://localhost:4200/`
