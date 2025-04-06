@@ -49,10 +49,25 @@ A web application for managing doctor appointments, built with Angular and Fireb
    ```
 
 3. Set up Firebase:
-   - Create a new Firebase project
+   - Create a new Firebase project at [Firebase Console](https://console.firebase.google.com/)
    - Enable Authentication and Realtime Database
-   - Copy `.env.example` to `.env` and fill in your Firebase configuration values from the Firebase Console
-   - Copy `src/environments/environment.template.ts` to `src/environments/environment.ts` and `src/environments/environment.development.ts`
+   - Get your Firebase configuration from Project Settings > General > Your apps > Web app
+   - Copy the environment template files:
+     ```bash
+     cp src/environments/environment.template.ts src/environments/environment.ts
+     cp src/environments/environment.template.ts src/environments/environment.development.ts
+     ```
+   - Open both files and replace the placeholder values with your Firebase configuration:
+     ```typescript
+     firebaseConfig: {
+       apiKey: 'your-api-key-here',           // Replace with your API key
+       authDomain: 'your-auth-domain-here',   // Replace with your auth domain
+       projectId: 'your-project-id-here',     // Replace with your project ID
+       storageBucket: 'your-bucket-here',     // Replace with your storage bucket
+       messagingSenderId: 'your-sender-id',   // Replace with your sender ID
+       appId: 'your-app-id-here'             // Replace with your app ID
+     }
+     ```
 
 4. Start the development server:
    ```bash
