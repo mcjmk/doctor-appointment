@@ -39,7 +39,7 @@
           *matCellDef="let user"
           [ngClass]="{
             active: user.banned === false,
-            banned: user.banned === true
+            banned: user.banned === true,
           }"
         >
           {{ user.banned ? "Banned" : "Active" }}

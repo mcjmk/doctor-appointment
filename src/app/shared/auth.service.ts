@@ -1,14 +1,14 @@
-import { Router } from '@angular/router';
-import { Injectable } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { Observable, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
-import firebase from 'firebase/compat/app';
-import { User } from './user';
+import { Router } from "@angular/router";
+import { Injectable } from "@angular/core";
+import { AngularFireAuth } from "@angular/fire/compat/auth";
+import { AngularFirestore } from "@angular/fire/compat/firestore";
+import { Observable, of } from "rxjs";
+import { map, switchMap } from "rxjs/operators";
+import firebase from "firebase/compat/app";
+import { User } from "./user";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class AuthService {
   userData: Observable<firebase.User | null>;
@@ -20,7 +20,7 @@ export class AuthService {
   constructor(
     private angularFireAuth: AngularFireAuth,
     private firestore: AngularFirestore,
-    private router: Router
+    private router: Router,
   ) {
     this.userData = this.angularFireAuth.authState;
 
@@ -30,7 +30,7 @@ export class AuthService {
           return this.firestore.doc<User>(`users/${user.uid}`).valueChanges();
         }
         return of(null);
-      })
+      }),
     );
   }
 
@@ -38,8 +38,8 @@ export class AuthService {
     return this.angularFireAuth
       .signInWithEmailAndPassword(email, password)
       .then((result) => {
-        if (!result.user) throw new Error('Login failed');
-        this.router.navigate(['/']);
+        if (!result.user) throw new Error("Login failed");
+        this.router.navigate(["/"]);
       });
   }
 
@@ -47,11 +47,11 @@ export class AuthService {
     return this.angularFireAuth
       .createUserWithEmailAndPassword(email, password)
       .then((userCredential) => {
-        if (!userCredential.user) throw new Error('Registration failed');
+        if (!userCredential.user) throw new Error("Registration failed");
         return this.createUserDocument(userCredential.user);
       })
       .then(() => {
-        this.router.navigate(['/']);
+        this.router.navigate(["/"]);
       });
   }
 
@@ -59,7 +59,7 @@ export class AuthService {
     return this.angularFireAuth.signOut().then(() => {
       localStorage.clear();
       sessionStorage.clear();
-      this.router.navigate(['/login']);
+      this.router.navigate(["/login"]);
     });
   }
 
@@ -68,15 +68,15 @@ export class AuthService {
   }
 
   isAdmin(): Observable<boolean> {
-    return this.currentUser.pipe(map((user) => user?.role === 'admin'));
+    return this.currentUser.pipe(map((user) => user?.role === "admin"));
   }
 
   isDoctor(): Observable<boolean> {
-    return this.currentUser.pipe(map((user) => user?.role === 'doctor'));
+    return this.currentUser.pipe(map((user) => user?.role === "doctor"));
   }
 
   isPatient(): Observable<boolean> {
-    return this.currentUser.pipe(map((user) => user?.role === 'patient'));
+    return this.currentUser.pipe(map((user) => user?.role === "patient"));
   }
 
   canAddReview(): Observable<boolean> {
@@ -85,8 +85,8 @@ export class AuthService {
 
   getDoctors(): Observable<User[]> {
     return this.firestore
-      .collection<User>('users', (ref) => ref.where('role', '==', 'doctor'))
-      .valueChanges({ idField: 'uid' });
+      .collection<User>("users", (ref) => ref.where("role", "==", "doctor"))
+      .valueChanges({ idField: "uid" });
   }
 
   getDoctorById(uid: string): Observable<User | null> {
@@ -97,11 +97,11 @@ export class AuthService {
   }
 
   private createUserDocument(user: firebase.User): Promise<void> {
-    const userRef = this.firestore.collection('users').doc(user.uid);
+    const userRef = this.firestore.collection("users").doc(user.uid);
     const userProfile = {
       uid: user.uid,
       email: user.email,
-      role: 'patient',
+      role: "patient",
       banned: false,
     };
     return userRef.set(userProfile);

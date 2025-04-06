@@ -1,14 +1,14 @@
-import { Component, Inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, Inject } from "@angular/core";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import {
   MAT_DIALOG_DATA,
   MatDialog,
   MatDialogRef,
-} from '@angular/material/dialog';
-import { User, Specialization } from '../../shared/user';
+} from "@angular/material/dialog";
+import { User, Specialization } from "../../shared/user";
 
 @Component({
-  selector: 'app-doctor-edit-dialog',
+  selector: "app-doctor-edit-dialog",
   template: `
     <h2 mat-dialog-title>Edit Doctor Details</h2>
     <mat-dialog-content>
@@ -59,30 +59,30 @@ import { User, Specialization } from '../../shared/user';
 export class DoctorEditDialogComponent {
   doctorForm: FormGroup;
   specializations: Specialization[] = [
-    'Lekarz rodzinny',
-    'Kardiolog',
-    'Dermatolog',
-    'Neurolog',
-    'Ortopeda',
-    'Pediatra',
-    'Laryngolog',
-    'Chirurg',
+    "Lekarz rodzinny",
+    "Kardiolog",
+    "Dermatolog",
+    "Neurolog",
+    "Ortopeda",
+    "Pediatra",
+    "Laryngolog",
+    "Chirurg",
   ];
 
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<DoctorEditDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { doctor: User }
+    @Inject(MAT_DIALOG_DATA) public data: { doctor: User },
   ) {
     this.doctorForm = this.fb.group({
-      firstName: [data.doctor.firstName || '', Validators.required],
-      lastName: [data.doctor.lastName || '', Validators.required],
-      displayName: [data.doctor.displayName || ''],
+      firstName: [data.doctor.firstName || "", Validators.required],
+      lastName: [data.doctor.lastName || "", Validators.required],
+      displayName: [data.doctor.displayName || ""],
       specialization: [
-        data.doctor.doctorDetails?.specialization || '',
+        data.doctor.doctorDetails?.specialization || "",
         Validators.required,
       ],
-      description: [data.doctor.doctorDetails?.description || ''],
+      description: [data.doctor.doctorDetails?.description || ""],
     });
   }
 

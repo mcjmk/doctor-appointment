@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { User } from '../../shared/user';
-import { Appointment } from '../appointment.model';
-import { combineLatest, Observable } from 'rxjs';
-import { AuthService } from '../../shared/auth.service';
-import { CalendarService } from '../calendar.service';
-import { MatDialog } from '@angular/material/dialog';
+import { Component, OnInit } from "@angular/core";
+import { User } from "../../shared/user";
+import { Appointment } from "../appointment.model";
+import { combineLatest, Observable } from "rxjs";
+import { AuthService } from "../../shared/auth.service";
+import { CalendarService } from "../calendar.service";
+import { MatDialog } from "@angular/material/dialog";
 import {
   startOfWeek,
   endOfWeek,
@@ -13,20 +13,20 @@ import {
   subWeeks,
   isSameDay,
   isToday,
-} from 'date-fns';
-import { AppointmentDialogComponent } from '../appointment-dialog/appointment-dialog.component';
-import { Absence } from '../absence.model';
-import { Availability } from '../availability.model';
+} from "date-fns";
+import { AppointmentDialogComponent } from "../appointment-dialog/appointment-dialog.component";
+import { Absence } from "../absence.model";
+import { Availability } from "../availability.model";
 
 @Component({
-  selector: 'app-calendar-view',
-  templateUrl: './calendar-view.component.html',
-  styleUrl: './calendar-view.component.css',
+  selector: "app-calendar-view",
+  templateUrl: "./calendar-view.component.html",
+  styleUrl: "./calendar-view.component.css",
 })
 export class CalendarViewComponent implements OnInit {
   weekDays: Date[] = [];
   doctors$: Observable<User[]>;
-  selectedDoctorId: string = '';
+  selectedDoctorId: string = "";
   timeSlots: string[] = [];
   currentDate = new Date();
   displayStartHour = 7;
@@ -41,7 +41,7 @@ export class CalendarViewComponent implements OnInit {
   constructor(
     public authService: AuthService,
     private calendarService: CalendarService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
   ) {
     this.doctors$ = this.calendarService.getAvailableDoctors();
     this.generateTimeSlots();
@@ -51,7 +51,7 @@ export class CalendarViewComponent implements OnInit {
   ngOnInit() {
     if (this.authService.isDoctor()) {
       this.authService.userData.subscribe((user) => {
-        this.selectedDoctorId = user?.uid || '';
+        this.selectedDoctorId = user?.uid || "";
         this.loadData();
       });
     } else if (this.authService.isPatient()) {
@@ -67,7 +67,7 @@ export class CalendarViewComponent implements OnInit {
   generateTimeSlots() {
     this.timeSlots = [];
     for (let hour = this.minHour; hour < this.maxHour; hour++) {
-      const h = hour.toString().padStart(2, '0');
+      const h = hour.toString().padStart(2, "0");
       this.timeSlots.push(`${h}:00`);
       this.timeSlots.push(`${h}:30`);
     }
@@ -85,32 +85,32 @@ export class CalendarViewComponent implements OnInit {
       const start = startOfWeek(this.currentDate, { weekStartsOn: 1 });
       const end = endOfWeek(this.currentDate, { weekStartsOn: 1 });
 
-      console.log('Loading data for doctor:', this.selectedDoctorId);
+      console.log("Loading data for doctor:", this.selectedDoctorId);
       combineLatest([
         this.calendarService.getDoctorAppointments(
           this.selectedDoctorId,
           start,
-          end
+          end,
         ),
         this.calendarService.getDoctorAbsences(this.selectedDoctorId),
         this.calendarService.getDoctorAvailability(this.selectedDoctorId),
       ]).subscribe({
         next: ([appointments, absences, availabilities]) => {
-          console.log('New data loaded:', {
+          console.log("New data loaded:", {
             appointments,
             absences,
             availabilities,
           });
 
           this.appointments = appointments.filter(
-            (app) => app.status !== 'odwołana'
+            (app) => app.status !== "odwołana",
           );
 
           this.absences = absences;
           this.availabilities = availabilities;
         },
         error: (error) => {
-          console.error('Error loading data:', error);
+          console.error("Error loading data:", error);
         },
       });
     }
@@ -140,7 +140,7 @@ export class CalendarViewComponent implements OnInit {
     return this.calendarService.isDoctorAvailable(
       day,
       timeSlot,
-      this.availabilities
+      this.availabilities,
     );
   }
 
@@ -162,14 +162,14 @@ export class CalendarViewComponent implements OnInit {
     return this.calendarService.getAppointment(
       day,
       timeSlot,
-      this.appointments
+      this.appointments,
     );
   }
 
   onSlotClick(day: Date, timeSlot: string) {
     if (this.isAvailable(day, timeSlot)) {
       const dialogRef = this.dialog.open(AppointmentDialogComponent, {
-        width: '400px',
+        width: "400px",
         data: {
           date: day,
           timeSlot: timeSlot,
@@ -191,7 +191,7 @@ export class CalendarViewComponent implements OnInit {
 
   isCurrentTimeSlot(slot: string): boolean {
     const now = new Date();
-    const [hours, minutes] = slot.split(':').map(Number);
+    const [hours, minutes] = slot.split(":").map(Number);
 
     return (
       now.getHours() === hours &&
@@ -207,7 +207,7 @@ export class CalendarViewComponent implements OnInit {
   getAppointmentCountForDay(day: Date): number {
     return this.calendarService.getAppointmentCountForDay(
       day,
-      this.appointments
+      this.appointments,
     );
   }
   get displayedTimeSlots(): string[] {
@@ -221,7 +221,7 @@ export class CalendarViewComponent implements OnInit {
     if (this.displayStartHour > this.minHour) {
       this.displayStartHour = Math.max(
         this.minHour,
-        this.displayStartHour - this.hoursToDisplay
+        this.displayStartHour - this.hoursToDisplay,
       );
     }
   }
@@ -231,7 +231,7 @@ export class CalendarViewComponent implements OnInit {
     if (this.displayStartHour < maxStartHour) {
       this.displayStartHour = Math.min(
         maxStartHour,
-        this.displayStartHour + this.hoursToDisplay
+        this.displayStartHour + this.hoursToDisplay,
       );
     }
   }
@@ -245,16 +245,16 @@ export class CalendarViewComponent implements OnInit {
   }
 
   getAppointmentClass(appointment: Appointment): string {
-    const classes = ['appointment-info'];
-    if (appointment.type === 'pierwsza') {
-      classes.push('first-visit');
-    } else if (appointment.type === 'kontrolna') {
-      classes.push('follow-up');
-    } else if (appointment.type === 'choroba przewlekła') {
-      classes.push('chronic');
-    } else if (appointment.type === 'recepta') {
-      classes.push('prescription');
+    const classes = ["appointment-info"];
+    if (appointment.type === "pierwsza") {
+      classes.push("first-visit");
+    } else if (appointment.type === "kontrolna") {
+      classes.push("follow-up");
+    } else if (appointment.type === "choroba przewlekła") {
+      classes.push("chronic");
+    } else if (appointment.type === "recepta") {
+      classes.push("prescription");
     }
-    return classes.join(' ');
+    return classes.join(" ");
   }
 }

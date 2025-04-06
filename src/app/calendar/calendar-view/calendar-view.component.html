@@ -46,7 +46,7 @@
         </th>
         <th *ngFor="let day of weekDays" [class.today-column]="isToday(day)">
           <div class="column-header">
-            {{ day | date : "EEE" }}, {{ day | date : "dd.MM" }}
+            {{ day | date: "EEE" }}, {{ day | date: "dd.MM" }}
             <div class="appointment-count">
               Wizyt: {{ getAppointmentCountForDay(day) }}
             </div>

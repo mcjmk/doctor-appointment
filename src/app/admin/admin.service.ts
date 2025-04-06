@@ -1,24 +1,24 @@
-import { Injectable } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { AuthService } from '../shared/auth.service';
-import { map, Observable } from 'rxjs';
-import { User } from '../shared/user';
+import { Injectable } from "@angular/core";
+import { AngularFireAuth } from "@angular/fire/compat/auth";
+import { AngularFirestore } from "@angular/fire/compat/firestore";
+import { AuthService } from "../shared/auth.service";
+import { map, Observable } from "rxjs";
+import { User } from "../shared/user";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class AdminService {
   constructor(
     private firestore: AngularFirestore,
     private auth: AngularFireAuth,
-    private authService: AuthService
+    private authService: AuthService,
   ) {}
 
   getAllUsers(): Observable<User[]> {
     return this.firestore
-      .collection<User>('users')
-      .valueChanges({ idField: 'uid' });
+      .collection<User>("users")
+      .valueChanges({ idField: "uid" });
   }
 
   async updateUserRole(userId: string, newRole: string): Promise<void> {
@@ -28,14 +28,14 @@ export class AdminService {
         updatedAt: new Date(),
       });
     } catch (error) {
-      console.error('Error updating user role:', error);
+      console.error("Error updating user role:", error);
       throw error;
     }
   }
 
   async toggleUserBan(
     userId: string,
-    currentBanStatus: boolean
+    currentBanStatus: boolean,
   ): Promise<void> {
     try {
       await this.firestore.doc(`users/${userId}`).update({
@@ -43,7 +43,7 @@ export class AdminService {
         updatedAt: new Date(),
       });
     } catch (error) {
-      console.error('Error toggling user ban status:', error);
+      console.error("Error toggling user ban status:", error);
       throw error;
     }
   }
@@ -52,27 +52,27 @@ export class AdminService {
     try {
       const credential = await this.auth.createUserWithEmailAndPassword(
         doctorData.email,
-        doctorData.password
+        doctorData.password,
       );
 
-      if (!credential.user) throw new Error('Failed to create user');
+      if (!credential.user) throw new Error("Failed to create user");
 
       const userData: Partial<User> = {
         uid: credential.user.uid,
         email: doctorData.email,
         firstName: doctorData.firstName,
         lastName: doctorData.lastName,
-        role: 'doctor',
+        role: "doctor",
         banned: false,
         doctorDetails: doctorData.doctorDetails,
       };
 
       await this.firestore
-        .collection('users')
+        .collection("users")
         .doc(credential.user.uid)
         .set(userData);
     } catch (error) {
-      console.error('Error creating doctor:', error);
+      console.error("Error creating doctor:", error);
       throw error;
     }
   }
@@ -84,14 +84,14 @@ export class AdminService {
         updatedAt: new Date(),
       };
 
-      await this.firestore.collection('users').doc(uid).update(update);
+      await this.firestore.collection("users").doc(uid).update(update);
     } catch (error) {
-      console.error('Error updating doctor:', error);
+      console.error("Error updating doctor:", error);
       throw error;
     }
   }
 
-  updatePersistence(type: 'LOCAL' | 'SESSION' | 'NONE'): Promise<void> {
+  updatePersistence(type: "LOCAL" | "SESSION" | "NONE"): Promise<void> {
     return this.authService.setPersistence(type);
   }
 }

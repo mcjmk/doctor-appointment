@@ -1,23 +1,22 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { AppointmentDialogComponent } from './appointment-dialog.component';
+import { AppointmentDialogComponent } from "./appointment-dialog.component";
 
-describe('AppointmentDialogComponent', () => {
+describe("AppointmentDialogComponent", () => {
   let component: AppointmentDialogComponent;
   let fixture: ComponentFixture<AppointmentDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [AppointmentDialogComponent]
-    })
-    .compileComponents();
+      declarations: [AppointmentDialogComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(AppointmentDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

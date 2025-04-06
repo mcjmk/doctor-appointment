@@ -1,25 +1,25 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from '../../shared/auth.service';
-import { Router } from '@angular/router';
+import { Component } from "@angular/core";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { AuthService } from "../../shared/auth.service";
+import { Router } from "@angular/router";
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
+  selector: "app-login",
+  templateUrl: "./login.component.html",
+  styleUrls: ["./login.component.scss"],
 })
 export class LoginComponent {
   loginForm: FormGroup;
-  errorMessage: String = '';
+  errorMessage: String = "";
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
   ) {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      email: ["", [Validators.required, Validators.email]],
+      password: ["", [Validators.required, Validators.minLength(6)]],
     });
   }
 
@@ -29,7 +29,7 @@ export class LoginComponent {
       this.authService
         .login(email, password)
         .then(() => {
-          this.router.navigate(['/']);
+          this.router.navigate(["/"]);
         })
         .catch((error) => {
           this.errorMessage = this.getErrorMessage(error);
@@ -38,6 +38,6 @@ export class LoginComponent {
   }
 
   private getErrorMessage(error: any): string {
-    return 'Email lub hasło są niepoprawne.';
+    return "Email lub hasło są niepoprawne.";
   }
 }

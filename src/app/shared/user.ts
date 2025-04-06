@@ -1,12 +1,12 @@
 export type Specialization =
-  | 'Lekarz rodzinny'
-  | 'Kardiolog'
-  | 'Dermatolog'
-  | 'Neurolog'
-  | 'Ortopeda'
-  | 'Pediatra'
-  | 'Laryngolog'
-  | 'Chirurg';
+  | "Lekarz rodzinny"
+  | "Kardiolog"
+  | "Dermatolog"
+  | "Neurolog"
+  | "Ortopeda"
+  | "Pediatra"
+  | "Laryngolog"
+  | "Chirurg";
 
 export interface DoctorDetails {
   firstName: string;
@@ -18,7 +18,7 @@ export interface DoctorDetails {
 export interface User {
   uid: string;
   email: string | null;
-  role: 'admin' | 'doctor' | 'patient';
+  role: "admin" | "doctor" | "patient";
   banned?: boolean;
   displayName?: string;
   firstName?: string;

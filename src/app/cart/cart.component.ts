@@ -1,20 +1,20 @@
-import { Component, OnInit } from '@angular/core';
-import { CalendarService } from '../calendar/calendar.service';
-import { AuthService } from '../shared/auth.service';
-import { Appointment } from '../calendar/appointment.model';
-import firebase from 'firebase/compat/app';
+import { Component, OnInit } from "@angular/core";
+import { CalendarService } from "../calendar/calendar.service";
+import { AuthService } from "../shared/auth.service";
+import { Appointment } from "../calendar/appointment.model";
+import firebase from "firebase/compat/app";
 
 @Component({
-  selector: 'app-cart',
-  templateUrl: './cart.component.html',
-  styleUrl: './cart.component.css',
+  selector: "app-cart",
+  templateUrl: "./cart.component.html",
+  styleUrl: "./cart.component.css",
 })
 export class CartComponent implements OnInit {
   upcomingAppointments: Appointment[] = [];
 
   constructor(
     private calendarService: CalendarService,
-    private authService: AuthService
+    private authService: AuthService,
   ) {}
 
   ngOnInit() {
@@ -49,11 +49,11 @@ export class CartComponent implements OnInit {
       .cancelAppointment(appointmentId)
       .then(() => {
         this.upcomingAppointments = this.upcomingAppointments.filter(
-          (app) => app.id !== appointmentId
+          (app) => app.id !== appointmentId,
         );
       })
       .catch((error) => {
-        console.error('Error canceling appointment:', error);
+        console.error("Error canceling appointment:", error);
       });
   }
 }

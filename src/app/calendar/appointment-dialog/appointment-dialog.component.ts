@@ -1,14 +1,14 @@
-import { AuthService } from './../../shared/auth.service';
-import { Component, Inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Appointment } from '../appointment.model';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { CalendarService } from '../calendar.service';
+import { AuthService } from "./../../shared/auth.service";
+import { Component, Inject } from "@angular/core";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { Appointment } from "../appointment.model";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { CalendarService } from "../calendar.service";
 
 @Component({
-  selector: 'app-appointment-dialog',
-  templateUrl: './appointment-dialog.component.html',
-  styleUrl: './appointment-dialog.component.css',
+  selector: "app-appointment-dialog",
+  templateUrl: "./appointment-dialog.component.html",
+  styleUrl: "./appointment-dialog.component.css",
 })
 export class AppointmentDialogComponent {
   appointmentForm: FormGroup;
@@ -20,16 +20,16 @@ export class AppointmentDialogComponent {
     private dialogRef: MatDialogRef<AppointmentDialogComponent>,
     private authService: AuthService,
     @Inject(MAT_DIALOG_DATA)
-    public data: { date: Date; timeSlot: string; doctorId: string }
+    public data: { date: Date; timeSlot: string; doctorId: string },
   ) {
     // this.calculateAvailableSlots();
 
     this.appointmentForm = this.fb.group({
-      type: ['', Validators.required],
-      patientName: ['', Validators.required],
-      patientGender: ['', Validators.required],
-      patientAge: ['', [Validators.required, Validators.min(0)]],
-      notes: [''],
+      type: ["", Validators.required],
+      patientName: ["", Validators.required],
+      patientGender: ["", Validators.required],
+      patientAge: ["", [Validators.required, Validators.min(0)]],
+      notes: [""],
     });
   }
 
@@ -39,19 +39,19 @@ export class AppointmentDialogComponent {
         if (!user) return;
 
         const formValue = this.appointmentForm.value;
-        const [hours, minutes] = this.data.timeSlot.split(':').map(Number);
+        const [hours, minutes] = this.data.timeSlot.split(":").map(Number);
         const startTime = new Date(this.data.date);
         startTime.setHours(hours, minutes, 0, 0);
 
         const endTime = new Date(startTime);
         endTime.setMinutes(endTime.getMinutes() + 30);
 
-        const appointment: Omit<Appointment, 'id'> = {
+        const appointment: Omit<Appointment, "id"> = {
           doctorId: this.data.doctorId,
           patientId: user.uid,
           startTime,
           endTime,
-          status: 'zajęta',
+          status: "zajęta",
           type: formValue.type,
           patientName: formValue.patientName,
           patientGender: formValue.patientGender,
@@ -63,7 +63,7 @@ export class AppointmentDialogComponent {
           .createAppointment(appointment)
 
           .then(() => {
-            console.log('Appointment created:', appointment); // log
+            console.log("Appointment created:", appointment); // log
             this.dialogRef.close(true);
           });
       });

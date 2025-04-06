@@ -1,23 +1,22 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { AvailabilityFormComponent } from './availability-form.component';
+import { AvailabilityFormComponent } from "./availability-form.component";
 
-describe('AvailabilityFormComponent', () => {
+describe("AvailabilityFormComponent", () => {
   let component: AvailabilityFormComponent;
   let fixture: ComponentFixture<AvailabilityFormComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [AvailabilityFormComponent]
-    })
-    .compileComponents();
+      declarations: [AvailabilityFormComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(AvailabilityFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });
